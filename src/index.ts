@@ -33,7 +33,7 @@ import { Server } from 'socket.io';
             */
             app.get('/', async function (request, response) {
                 try {
-                    return response.sendFile(path.resolve(__dirname + "/src/atmjdj-webview/index.html"));
+                    return response.sendFile(path.resolve(__dirname + "/frontend/index.html"));
                 } catch (e) {
                     console.error(e);
                 }
