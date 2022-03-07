@@ -9,6 +9,8 @@ import { Server } from 'socket.io';
 (async function () {
     try {
 
+            //@TODO: Zugriff auf Spotify Nutzerdaten über process.env.SPOTIFY_USER || process.env.SPOTIFY_PW
+
         /**************************
         Web server Configuration
         **************************/
