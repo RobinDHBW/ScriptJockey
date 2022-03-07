@@ -21,6 +21,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "genius-lyrics-api": "^3.2.0",
     "socket.io": "^4.4.1",
     "spotify-playback-sdk-node": "https://gitpkg.now.sh/RobinDHBW/spotify-playback-sdk-node/lib?main",
     "swagger-ui-express": "^4.3.0"
