@@ -5,6 +5,7 @@ import http from "http";
 import path from "path";
 import 'dotenv/config';
 import { Server } from 'socket.io';
+import "spotify-playback-sdk-node"; 
 
 (async function () {
     try {
