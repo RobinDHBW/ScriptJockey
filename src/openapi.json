@@ -1,0 +1,101 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "description": "",
+        "version": "1.0.0",
+        "title": "Jukebox",
+        "contact": {
+            "name": "API Support",
+            "email": "apiteam@swagger.io"
+        }
+    },
+    "tags": [{
+        "name": "genius",
+        "description": "accessing Genius API endpoints",
+        "externalDocs": {
+            "description": "Find out more",
+            "url": "https://docs.genius.com/"
+        }
+    }],
+    "paths": {
+        "/lyrics/{title}/{artist}": {
+            "get": {
+                "tags": [
+                    "genius"
+                ],
+                "description": "get song lyrics by searching for title and artist",
+                "parameters": [{
+                    "in": "path",
+                    "name": "title",
+                    "description": "title of the song",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "in": "path",
+                    "name": "artist",
+                    "description": "main artist of the song",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Song lyrics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "items": {
+                                        "$ref": "#/components/schemas/lyric"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lyrics not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "items": {
+                                        "$ref": "#/components/schemas/error"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "lyric": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "integer"
+                    },
+                    "lyrics": {
+                        "type": "string"
+                    }
+                }
+            },
+            "error": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

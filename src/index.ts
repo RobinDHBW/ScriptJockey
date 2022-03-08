@@ -8,6 +8,7 @@ import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
 import "spotify-playback-sdk-node"; 
 import { Spotify } from "./app";
+// import {SwaggerDocument } from 'openapi'
 //import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node/dist/spotify";
 
 import { GeniusApi } from './genius/genius-app';
@@ -24,8 +25,9 @@ import { GeniusApi } from './genius/genius-app';
         const server = http.createServer(app);
         const gApiAccess = new GeniusApi();
 
-
-        // app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+        const swaggerUi = require('swagger-ui-express');
+        const swaggerDocument = require('../src/openapi.json');
+        app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
         //app.use(express.static(__dirname + '/public'));
         //app.use(cors());
@@ -37,7 +39,7 @@ import { GeniusApi } from './genius/genius-app';
         }));
         app.use(bodyParser.json({
         }));
-        //app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
         /**************************
         REST-Api Hooks
         **************************/
@@ -262,7 +264,7 @@ import { GeniusApi } from './genius/genius-app';
         app.get('/lyrics/:title/:artist', async function(req, res) {
            
                 try {
-                    res.json(await gApiAccess.getLyrics(req, res));
+                    res.json(await gApiAccess.getLyrics(req));
                 } catch (error) {
                     console.error(error);
                     res.json({
