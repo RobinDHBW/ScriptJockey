@@ -156,8 +156,8 @@ export class Spotify {
         return redirectUrl;
     };
 
-    refreshToken = async function (refresh_token: any) {
-        this.refresh_token = refresh_token || this.refresh_token;
+    refreshToken = async function () {
+        //this.refresh_token = refresh_token || this.refresh_token;
         var url = "https://accounts.spotify.com/api/token";
         var authOptions = {
             url: url,
@@ -183,7 +183,7 @@ export class Spotify {
 
         if (!response.data.error && response.status === 200) {
             this.access_token = response.data.access_token;
-            return this.access_token;
+            //console.log(this.access_token);
         }
     };
 
@@ -192,7 +192,7 @@ export class Spotify {
         var _this = this;
         var hasNext = true;
         var url =
-            "https://api.spotify.com/v1/playlist/" +
+            "https://api.spotify.com/v1/playlists/" +
             id +
             "/tracks?limit=100&offset=0";
 

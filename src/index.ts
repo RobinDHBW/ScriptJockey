@@ -6,15 +6,16 @@ import path from "path";
 import 'dotenv/config';
 import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
-import "spotify-playback-sdk-node"; 
+import "spotify-playback-sdk-node";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 
+ 
 (async function () {
     try {
 
-            //@TODO: Zugriff auf Spotify Nutzerdaten über process.env.SPOTIFY_USER || process.env.SPOTIFY_PW
-        
+        //@TODO: Zugriff auf Spotify Nutzerdaten über process.env.SPOTIFY_USER || process.env.SPOTIFY_PW
+
         /**************************
         Web server Configuration
         **************************/
@@ -25,6 +26,7 @@ import { GeniusApi } from './genius/genius-app';
         const swaggerUi = require('swagger-ui-express');
         const swaggerDocument = require('../src/openapi.json');
         app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+        var timerId: any;
 
         //app.use(express.static(__dirname + '/public'));
         //app.use(cors());
@@ -61,7 +63,11 @@ import { GeniusApi } from './genius/genius-app';
             response.redirect(
                 "https://accounts.spotify.com/authorize?" + spotifyAPI.login(state).toString()
             );
+            clearInterval(timerId);
+            timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
         });
+
+        
 
         app.get("/callback", async function (request, response) {
             try {
@@ -82,14 +88,14 @@ import { GeniusApi } from './genius/genius-app';
         });
 
         app.get("/test", async function (request, response) {
-           try {               
+            try {
                 await spotifyAPI.test();
-           } catch (ex) {
-               console.error(ex);
-           }
+            } catch (ex) {
+                console.error(ex);
+            }
         });
 
-        app.get("/refresh_token", async function (request, response) {
+        /*app.get("/refresh_token", async function (request, response) {
             try {
                 var refresh_token = request.query.refresh_token;
                 response.send({
@@ -98,7 +104,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
             }
-        });
+        });*/
 
         app.get("/playlists/:playlist_id", async function (request, response) {
             try {
@@ -106,7 +112,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -119,7 +125,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -134,7 +140,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -147,7 +153,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -160,7 +166,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status, 
+                    status: error.response.data.error.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -173,7 +179,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status, 
+                    status: error.response.data.error.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -187,7 +193,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -212,7 +218,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -225,7 +231,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -238,7 +244,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -252,7 +258,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -266,7 +272,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -279,7 +285,7 @@ import { GeniusApi } from './genius/genius-app';
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status, 
+                    status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
                 });
@@ -287,17 +293,17 @@ import { GeniusApi } from './genius/genius-app';
         });
 
 
-        app.get('/lyrics/:title/:artist', async function(req, res) {
-           
-                try {
-                    res.json(await gApiAccess.getLyrics(req));
-                } catch (error) {
-                    console.error(error);
-                    res.json({
-                        status: 404,
-                        message: error.message,
-                    });
-                }
+        app.get('/lyrics/:title/:artist', async function (req, res) {
+
+            try {
+                res.json(await gApiAccess.getLyrics(req));
+            } catch (error) {
+                console.error(error);
+                res.json({
+                    status: 404,
+                    message: error.message,
+                });
+            }
         });
 
 
