@@ -7,10 +7,7 @@ import 'dotenv/config';
 import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
 import "spotify-playback-sdk-node"; 
-import { Spotify } from "./app";
-// import {SwaggerDocument } from 'openapi'
-//import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node/dist/spotify";
-
+import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 
 (async function () {
@@ -86,7 +83,7 @@ import { GeniusApi } from './genius/genius-app';
 
         app.get("/test", async function (request, response) {
            try {               
-                spotifyAPI.test();
+                await spotifyAPI.test();
            } catch (ex) {
                console.error(ex);
            }
@@ -108,8 +105,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.json(await spotifyAPI.getPlaylist(request.params.playlist_id));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message,
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -119,8 +118,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.getUserPlaylists(request.params.user_id));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message,
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -132,8 +133,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.searchTrack(track, artist));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message,
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -143,30 +146,36 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.getPlayer());
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message,
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
 
         app.get("/player/pause", async function (request, response) {
             try {
-                response.send(await spotifyAPI.pausePlayer());
+                response.status(200).send(await spotifyAPI.pausePlayer());
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message,
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
 
         app.get("/player/play", async function (request, response) {
             try {
-                response.send(await spotifyAPI.playPlayer());
+                response.status(200).send(await spotifyAPI.playPlayer());
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -177,8 +186,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.transferPlayback(id));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -200,8 +211,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.addTracktoQueue(id));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -211,8 +224,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.nextTrack());
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -222,8 +237,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.previousTrack());
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -234,8 +251,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.setRepeatMode(mode));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -246,8 +265,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.setVolume(volume));
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });
@@ -257,8 +278,10 @@ import { GeniusApi } from './genius/genius-app';
                 response.send(await spotifyAPI.getDevices());
             } catch (error) {
                 console.error(error);
-                response.send({
-                    message: error.message,
+                response.status(error.response.data.error.status).send({
+                    status: error.response.data.error.status || error.response.status, 
+                    statusText: error.response.statusText,
+                    message: error.response.data.error.message
                 });
             }
         });

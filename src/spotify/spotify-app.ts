@@ -1,5 +1,5 @@
 import axios from "axios";
-//import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node";
+import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node";
 
 export class Spotify {
     client_id: string;
@@ -24,29 +24,36 @@ export class Spotify {
     }
 
     test = async function () {
-        try {
-            const { SpotifyPlaybackSDK } = require("spotify-playback-sdk-node");
+        var _this = this;
+        const spotify = new SpotifyPlaybackSDK();
+        await spotify.init();
 
-            const spotify = new SpotifyPlaybackSDK();
-            await spotify.init();
+        const player = await spotify.createPlayer({
+            name: "Web",
+            getOAuthToken() {
+                return _this.access_token;
+            },
+        });
 
-            const player = await spotify.createPlayer({
-                name: "Web",
-                getOAuthToken() {
 
-                    return this.access_token;
-                },
-            });
-            player.on("player_state_changed", console.log);
+        const stream = await player.getAudio();
+        const connected = await player.connect();
+        if (!connected) throw "couldn't connect";
 
-            const stream = await player.getAudio();
-            const connected = await player.connect();
-            if (!connected) throw "couldn't connect";
+        player.on("ready", console.log);
+        player.on("not_ready", console.log);
+        player.on("player_state_changed", console.log);
+        player.on("initialization_error", console.log);
+        player.on("authentication_error", console.log);
+        player.on("account_error", console.log);
+        player.on("playback_error", console.log);
 
-            console.log("connected", stream);
-        } catch (error) {
-            console.error(error);
-        }
+
+        console.log("connected", stream);
+    }
+
+    getAccessToken = function () {
+        return this.access_token;
     }
 
     /**
@@ -80,7 +87,7 @@ export class Spotify {
 
         // your application requests authorization
         var scope =
-            "user-read-private user-read-email playlist-read-private user-read-playback-state user-modify-playback-state";
+            "user-read-private user-read-email playlist-read-private user-read-playback-state user-modify-playback-state streaming";
 
         var url = new URLSearchParams({
             response_type: "code",
@@ -185,7 +192,7 @@ export class Spotify {
         var _this = this;
         var hasNext = true;
         var url =
-            "https://api.spotify.com/v1/playlists/" +
+            "https://api.spotify.com/v1/playlist/" +
             id +
             "/tracks?limit=100&offset=0";
 
@@ -300,7 +307,7 @@ export class Spotify {
     getPlayer = async function () {
         var _this = this;
         var currentlyPlaying = new Object();
-        const artists = Array<string>();
+        const artists = new Array<string>();
         var url = "https://api.spotify.com/v1/me/player";
         var options = {
             url: url,
@@ -310,22 +317,27 @@ export class Spotify {
 
         const response = await axios.get(url, options);
 
-        response.data.item.artists.forEach((artist: any) =>
-            artists.push(artist.name)
-        );
+        if (response.data) {
+            response.data.item.artists.forEach((artist: any) =>
+                artists.push(artist.name)
+            );
 
-        currentlyPlaying = {
-            track: response.data.item.name,
-            track_id: response.data.item.id,
-            device: response.data.device.name,
-            device_id: response.data.device.id,
-            artists: artists,
-            album: response.data.item.album.name,
-            duration: _this.calculateDuration(response.data.item.duration_ms),
-            progress: _this.calculateDuration(response.data.progress_ms),
-            isPlaying: response.data.is_playing
-        };
-        return currentlyPlaying;
+            currentlyPlaying = {
+                track: response.data.item.name,
+                track_id: response.data.item.id,
+                device: response.data.device.name,
+                device_id: response.data.device.id,
+                artists: artists,
+                album: response.data.item.album.name,
+                duration: _this.calculateDuration(response.data.item.duration_ms),
+                progress: _this.calculateDuration(response.data.progress_ms),
+                isPlaying: response.data.is_playing
+            };
+            return currentlyPlaying;
+        }
+        else {
+            return { message: "no active device, use /switchPlayer/{device_id} to switch your Player" }
+        }
     };
 
     pausePlayer = async function () {
