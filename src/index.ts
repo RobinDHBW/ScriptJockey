@@ -10,7 +10,6 @@ import "spotify-playback-sdk-node";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 
- 
 (async function () {
     try {
 
@@ -67,7 +66,7 @@ import { GeniusApi } from './genius/genius-app';
             timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
         });
 
-        
+
 
         app.get("/callback", async function (request, response) {
             try {

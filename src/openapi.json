@@ -89,7 +89,7 @@
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "get content of playlist by id",
+                "description": "get content of playlist by id e.g. 7LBhiiutTkDBGUfBzVPaoU",
                 "parameters": [
                     {
                         "in": "path",
@@ -129,7 +129,7 @@
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "requests user authorization to access data",
+                "description": "requests user authorization to access data @try it out doesn't work in Swagger-UI",
                 "responses": {
                     "200": {
                         "description": "redirects to Spotify Accounts Service, login prompt"
@@ -145,7 +145,7 @@
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "requests access and refresh token, is called after successful login",
+                "description": "requests access and refresh token, is called after successful login @try it out doesn't work in Swagger-UI",
                 "responses": {
                     "200": {
                         "description": "sets access and refresh token"
@@ -161,7 +161,7 @@
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "pause active player",
+                "description": "pause current playback",
                 "responses": {
                     "200": {
                         "description": "successfully paused"
@@ -171,6 +171,9 @@
                     },
                     "403": {
                         "description": "Forbidden, player is already paused"
+                    },
+                    "404": {
+                        "description": "Device not found"
                     }
                 }
             }
@@ -180,7 +183,7 @@
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "play active player",
+                "description": "resume current playback",
                 "responses": {
                     "200": {
                         "description": "successfully played"
@@ -189,7 +192,119 @@
                         "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
                     },
                     "403": {
-                        "description": "Forbidden, player plays already"
+                        "description": "Forbidden, player is already playing"
+                    },
+                    "404": {
+                        "description": "Device not found"
+                    }
+                }
+            }
+        },
+        "/player/queue/{track_id}": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "add track to queue by id e.g. 64BbK9SFKH2jk86U3dGj2P",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "track_id",
+                        "description": "track id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully added to queue"
+                    },
+                    "401": {
+                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    }
+                }
+            }
+        },
+        "/player": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "get information about the user's current player and playback state",
+                "responses": {
+                    "200": {
+                        "description": "current playback state and current song",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/currentTrack"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    },
+                    "404": {
+                        "description": "no active device found"
+                    }
+                }
+            }
+        },
+        "/player/devices": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "user's available devices",
+                "responses": {
+                    "200": {
+                        "description": "available devices",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Device"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    }
+                }
+            }
+        },
+        "/switchPlayer/{device_id}": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "transfer playback to the given device id and start playback",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "device_id",
+                        "description": "device id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "playback switched"
+                    },
+                    "401": {
+                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    },
+                    "404": {
+                        "description": "device not found"
                     }
                 }
             }

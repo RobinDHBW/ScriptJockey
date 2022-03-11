@@ -17,7 +17,7 @@ export class Spotify {
         this.redirect_uri = "http://localhost:8080/callback"; // Your redirect uri
         this.playlistContent = new Array<Object>();
         //this.redirect;
-        this.device_id = "736893c70c440b9e727b17ad95cfa8fc8d52e959";
+        //this.device_id = "736893c70c440b9e727b17ad95cfa8fc8d52e959";
         //this.device_id = "9bd9d72d9d1fde992f9ff70832230b8a1898f45e";
         //this.device_id = "14fddc193f451b8dcb01daf0982afd8d4c94bd23";
         this.stateKey = "spotify_auth_state";
@@ -239,10 +239,6 @@ export class Spotify {
         );
     };
 
-    setDeviceId = function (id: string) {
-        this.device_id = id;
-    }
-
     getUserPlaylists = async function (id: string) {
         var playlists = Array<any>();
         var url = "https://api.spotify.com/v1/users/" + id + "/playlists";
@@ -333,10 +329,20 @@ export class Spotify {
                 progress: _this.calculateDuration(response.data.progress_ms),
                 isPlaying: response.data.is_playing
             };
+            this.device_id = response.data.device.id;
             return currentlyPlaying;
         }
         else {
-            return { message: "no active device, use /switchPlayer/{device_id} to switch your Player" }
+            throw {
+                response: {
+                    data: {
+                        error: {
+                            status: 404,
+                            message: "no active device, use /switchPlayer/{device_id} to switch your Player"
+                        }
+                    }
+                }
+            }
         }
     };
 
