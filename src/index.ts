@@ -306,7 +306,7 @@ import { GeniusApi } from './genius/genius-app';
         });
 
 
-        app.use(express.static(path.normalize(__dirname + "/frontend/")));
+        app.use(express.static(path.join(__dirname + "/frontend/")));
         const io = new Server(server);
         io.on("connection", (socket) => {
             console.log("Socket connected");
