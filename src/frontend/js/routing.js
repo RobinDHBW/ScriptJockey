@@ -1,4 +1,6 @@
+"use strict"
 class Scratcher {
+
     #mainElement;
 
     constructor() {
@@ -6,7 +8,7 @@ class Scratcher {
     }
 
     async #appendToMain(data) {
-        this.#mainElement.empty();
+       // this.#mainElement.empty();
         this.#mainElement.append(data);
     }
 
