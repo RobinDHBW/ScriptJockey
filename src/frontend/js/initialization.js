@@ -1,9 +1,8 @@
-const { Router } = require("express");
-
 $(document).ready(async () => {
     try {
         const mainController = new MainController();
-        const router = new Router();
+        const router = new Scratcher();
+        router.getStart();
 
         $.get("/config", async (data, status) => {
             try {

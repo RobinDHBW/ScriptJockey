@@ -54,6 +54,22 @@ import { GeniusApi } from './genius/genius-app';
             }
         });
 
+        app.get('/fe/start', async function (request, response) {
+            try {
+                return response.sendFile(path.resolve(__dirname + "/frontend/html/start.html"));
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        app.get('/fe/backroom-poker', async function (request, response) {
+            try {
+                return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
         const spotifyAPI = new Spotify();
 
         app.get("/login", function (request, response) {

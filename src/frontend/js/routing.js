@@ -1,8 +1,8 @@
-class Router {
+class Scratcher {
     #mainElement;
 
     constructor() {
-        this.#mainElement = $("main-body");
+        this.#mainElement = $("#main-body");
     }
 
     async #appendToMain(data) {
@@ -15,7 +15,7 @@ class Router {
      */
     async getStart() {
         try {
-            $.get("/start", async (data, status) => {
+            $.get("/fe/start", async (data, status) => {
                 try {
                     if (status === "success") {
                         this.#appendToMain(data);
@@ -30,7 +30,7 @@ class Router {
      */
     async getBackroom() {
         try {
-            $.get("/backroom-poker", async (data, status) => {
+            $.get("/fe/backroom-poker", async (data, status) => {
                 try {
                     if (status === "success") {
                         this.#appendToMain(data);
