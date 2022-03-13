@@ -1,18 +1,43 @@
-page.base('/');
-page('/', index);
-page('/backroom-poker', dj);
+class Router {
+    #mainElement;
 
-const mainBody = $('#main-body');
+    constructor() {
+        this.#mainElement = $("main-body");
+    }
 
-function index(){
-    mainBody.empty();    
+    async #appendToMain(data) {
+        this.#mainElement.empty();
+        this.#mainElement.append(data);
+    }
 
-    mainBody.append("<p>Hallo</p>")
-    // mainBody.load("./index.html")
-}
+    /**
+     * 
+     */
+    async getStart() {
+        try {
+            $.get("/start", async (data, status) => {
+                try {
+                    if (status === "success") {
+                        this.#appendToMain(data);
+                    }
+                } catch (e) { console.error(e) }
+            })
+        } catch (e) { console.error(e) }
+    }
 
-function dj(){
-    mainBody.empty();
-    mainBody.append("<p>Hallo</p>")
-    //mainBody.load("");
+    /**
+     * 
+     */
+    async getBackroom() {
+        try {
+            $.get("/backroom-poker", async (data, status) => {
+                try {
+                    if (status === "success") {
+                        this.#appendToMain(data);
+                    }
+                } catch (e) { console.error(e) }
+            })
+        } catch (e) { console.error(e) }
+    }
+
 }
