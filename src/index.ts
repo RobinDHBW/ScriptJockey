@@ -6,7 +6,6 @@ import path from "path";
 import 'dotenv/config';
 import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
-import "spotify-playback-sdk-node";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 
