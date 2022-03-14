@@ -84,8 +84,10 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
         app.get('/fe/sync', async function (request: express.Request, response: express.Response) {
             try {
+                var currentTrack:any = await spotifyAPI.getPlayer();
+               
                 //TODO spotify api --> get actual playlist
-                return response.send("Bitte nicht füttern!");
+                return response.send(await spotifyAPI.getPlaylist(currentTrack.playlist_id));
             } catch (e) {
                 console.error(e);
             }
@@ -114,6 +116,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                     clearInterval(timerId);
                     timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
                     // response.clearCookie("spotify_auth_state");
+                    spotifyAPI.callback(code);
                     response.redirect("/#");
                 }
             } catch (error) {
