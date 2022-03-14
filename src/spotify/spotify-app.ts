@@ -22,7 +22,6 @@ export class Spotify {
         //this.device_id = "9bd9d72d9d1fde992f9ff70832230b8a1898f45e";
         //this.device_id = "14fddc193f451b8dcb01daf0982afd8d4c94bd23";
         this.stateKey = "spotify_auth_state";
-        console.log(this.redirect_uri);
     }
 
     getAccessToken = function () {

@@ -15,13 +15,8 @@ class Scratcher {
      */
     async getStart() {
         try {
-            $.get("/fe/start", async (data, status) => {
-                try {
-                    if (status === "success") {
-                        this.#appendToMain(data);
-                    }
-                } catch (e) { console.error(e) }
-            })
+            const result = await $.get("/fe/start");
+            this.#appendToMain(result);
         } catch (e) { console.error(e) }
     }
 
@@ -41,6 +36,6 @@ class Scratcher {
                 } catch (e) { console.error(e) }
             })
         } catch (e) { console.error(e) }
-    }   
+    }
 
 }

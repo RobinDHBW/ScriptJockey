@@ -1,17 +1,15 @@
 "use strict"
 class MainController {
+    #router;
 
-    constructor() {
-
+    constructor(router) {
+        this.#router = router
     }
 
     async initPlaylist() {
         try {
-            // const automatedid3List = $("#automatedID3List")
+            await this.#router.getStart();
             $("#automatedID3Table").empty();
-            // while ($("#automatedID3Table").first()) {
-            //     $("#automatedID3Table").first().remove();
-            // }
             if ($("#fetchAlert")) {
                 $("#fetchAlert").parent().find("#fetchAlert").remove();
             }
@@ -53,7 +51,10 @@ class MainController {
                     $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>${status}</strong> | Fetch data from server failed!</div>`))
                 }
             })
-        } catch (e) { console.error(e) }
+        } catch (e) { 
+            console.error(e)
+            $("#spinning-sheep-gatter").attr('style', 'display: none !important');
+         }
 
     }
 
