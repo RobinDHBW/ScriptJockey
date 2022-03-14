@@ -66,7 +66,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
         app.get('/fe/backroom-poker', async function (request: express.Request, response: express.Response) {
             try {
-                if (request.cookies && request.cookies["spotify_auth_state"]) {
+                if (request.cookies && request.cookies["spotify_auth_state"] && djInTheHouse) {
                     return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
                 } else if(!djInTheHouse) {
                     const state: string = spotifyAPI.generateRandomString(16);
