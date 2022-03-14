@@ -82,6 +82,15 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             }
         });
 
+        app.get('/fe/sync', async function (request: express.Request, response: express.Response) {
+            try {
+                //TODO spotify api --> get actual playlist
+                return response.send("Bitte nicht füttern!");
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
 
 
         app.get("/login", function (request, response) {

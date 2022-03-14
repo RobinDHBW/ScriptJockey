@@ -15,7 +15,7 @@ class MainController {
             }
 
             $("#spinning-sheep-gatter").attr('style', 'display: flex !important');
-            $.get("/playlist", (data, status) => {
+            $.get("/fe/sync", (data, status) => {
                 // console.log(data, status);
                 // const id3Array = JSON.parse(data);
                 $("#spinning-sheep-gatter").attr('style', 'display: none !important');
