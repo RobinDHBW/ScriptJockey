@@ -89,15 +89,6 @@ import { GeniusApi } from './genius/genius-app';
             }
         });
 
-        app.get("/test", async function (request, response) {
-            try {
-                await spotifyAPI.test();
-            } catch (ex) {
-                console.error(ex);
-            }
-        });
-
-
         /*app.get("/refresh_token", async function (request, response) {
             try {
                 var refresh_token = request.query.refresh_token;

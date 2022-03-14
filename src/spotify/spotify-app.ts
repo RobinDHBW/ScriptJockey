@@ -24,35 +24,6 @@ export class Spotify {
         this.stateKey = "spotify_auth_state";
     }
 
-    test = async function () {
-        var _this = this;
-        const spotify = new SpotifyPlaybackSDK();
-        await spotify.init();
-
-        const player = await spotify.createPlayer({
-            name: "Web",
-            getOAuthToken() {
-                return _this.access_token;
-            },
-        });
-
-
-        const stream = await player.getAudio();
-        const connected = await player.connect();
-        if (!connected) throw "couldn't connect";
-
-        player.on("ready", console.log);
-        player.on("not_ready", console.log);
-        player.on("player_state_changed", console.log);
-        player.on("initialization_error", console.log);
-        player.on("authentication_error", console.log);
-        player.on("account_error", console.log);
-        player.on("playback_error", console.log);
-
-
-        console.log("connected", stream);
-    }
-
     getAccessToken = function () {
         return this.access_token;
     }
