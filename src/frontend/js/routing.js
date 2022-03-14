@@ -1,15 +1,12 @@
 "use strict"
 class Scratcher {
 
-    #mainElement;
-
     constructor() {
-        this.#mainElement = $("#main-body");
     }
 
     async #appendToMain(data) {
        // this.#mainElement.empty();
-        this.#mainElement.append(data);
+        $("#main-body").append(data);
     }
 
     /**

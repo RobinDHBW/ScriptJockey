@@ -4,6 +4,7 @@
   "description": "Let em vote. Enjoy yourself.",
   "main": "dist/index.js",
   "scripts": {
+    "prestart": "copyfiles -u 1 src/frontend/**/* dist",
     "start": "tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +18,7 @@
     "axios": "^0.26.0",
     "body-parser": "^1.19.2",
     "cookie-parser": "^1.4.6",
+    "copyfiles": "^2.4.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "genius-lyrics-api": "^3.2.0",
