@@ -22,14 +22,14 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         const app = express();
         const server = http.createServer(app);
         const gApiAccess = new GeniusApi();
+        let spotifyAPI: Spotify;
 
-        const swaggerUi:SwaggerOptions = require('swagger-ui-express');
-        const swaggerDocument:JSON = require('../src/openapi.json');
+        const swaggerUi: SwaggerOptions = require('swagger-ui-express');
+        const swaggerDocument: JSON = require('../src/openapi.json');
         app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-        var timerId: string;
+        let timerId: any;
 
-        //app.use(express.static(__dirname + '/public'));
-        //app.use(cors());
+        //app.use(express.static(__dirname + '/public'));        
         app.use(cookieParser());
 
         //Here we are configuring express to use body-parser as middle-ware.
@@ -37,13 +37,11 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             extended: true
         }));
         app.use(bodyParser.json({
-        }));
+        }));        
 
         /**************************
         REST-Api Hooks
         **************************/
-
-        let isAuthenticated:boolean = false;
 
         /**
         * initial hook
@@ -67,41 +65,25 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
         app.get('/fe/backroom-poker', async function (request: express.Request, response: express.Response) {
             try {
-                if (!isAuthenticated) {
-                    const state:string = spotifyAPI.generateRandomString(16);
-                    response.status(250); //Own defined to check in Frontend
-                    return response.send(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString())
-                } else {
+                if (request.cookies && request.cookies["spotify_auth_state"]) {
                     return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
+                } else {
+                    const state: string = spotifyAPI.generateRandomString(16);
+                    response.status(250); //Own defined to check in Frontend
+                    response.cookie("spotify_auth_state", state);
+                    return response.send(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString())
                 }
             } catch (e) {
                 console.error(e);
             }
         });
 
-        app.post('/fe/auth-success', async function (request: express.Request, response: express.Response) {
-            try {
-                isAuthenticated = true;
 
-            } catch (error) {
-                console.error(error);
-
-            }
-
-        })
-
-        const spotifyAPI = new Spotify();
-        //await spotifyAPI.createTab();
 
         app.get("/login", function (request, response) {
             const state = spotifyAPI.generateRandomString(16);
             response.cookie("spotify_auth_state", state);
-            response.redirect(
-                process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString()
-            );
-           // clearInterval(timerId);
-           // timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
-
+            response.redirect(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString());
         });
 
 
@@ -110,17 +92,22 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             try {
                 var code = request.query.code || null;
                 var state = request.query.state || null;
-                var storedState = request.cookies ? request.cookies["spotify_auth_state"] : null;
+                var storedState = request.cookies && request.cookies["spotify_auth_state"];
 
-                if (state === null || state !== storedState) {
-                    var responseUrl = new URLSearchParams({ error: "state_mismatch" });
-                    response.redirect("/#" + responseUrl.toString());
+                if (state === null || state !== storedState) { //not wokring without a cookie
+                    throw new Error("State mismatch. Authentication failure!");
+                    // var responseUrl = new URLSearchParams({ error: "state_mismatch" });
+                    //  response.redirect("/#" + responseUrl.toString());
                 } else {
-                    response.clearCookie("spotify_auth_state");
-                    response.redirect("/#" + (await spotifyAPI.callback(code)).toString());
+                    clearInterval(timerId);
+                    timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
+                    // response.clearCookie("spotify_auth_state");
+                    response.redirect("/#");
                 }
             } catch (error) {
                 console.error(error);
+                response.status(501);
+                response.send(error);
             }
         });
 
@@ -341,8 +328,9 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         io.on("connection", (socket) => {
             console.log("Socket connected");
         });
-        server.listen(process.env.SERVERPORT, async function () {
+        server.listen({ port: process.env.SERVERPORT, host: 'localhost' }, async function () {
             try {
+                spotifyAPI = new Spotify(JSON.stringify(server.address()));
                 console.log(`started && running @ port ${process.env.SERVERPORT}`);
 
             } catch (e) { console.error(e) }

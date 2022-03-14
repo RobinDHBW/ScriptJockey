@@ -33,7 +33,7 @@ class Scratcher {
             $.get("/fe/backroom-poker", async (data, status, xhr) => {
                 try {
                     if (status === "success" && xhr.status === 250) {
-                        var win = window.open(data, '_blank');
+                        const win = window.open(data, "_self");
                         if (win) win.focus();
                     } else if (status === "success") {
                         this.#appendToMain(data);

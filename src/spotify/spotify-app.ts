@@ -11,16 +11,18 @@ export class Spotify {
     device_id: string;
     stateKey: string;
 
-    constructor() {
-        this.client_id = "5c29ae1655bb457e9386f9f233ff3091"; // Your client id
-        this.client_secret = "c6c05a2783c449418dafe503a3441a4b"; // Your secret
-        this.redirect_uri = "http://localhost:8080/callback"; // Your redirect uri
+    constructor(address: string) {
+        const addressJSON = JSON.parse(address);
+        this.client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
+        this.client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
+        this.redirect_uri = "http://" + addressJSON.address + ":" + addressJSON.port + "/callback"; // Your redirect uri
         this.playlistContent = new Array<Object>();
         //this.redirect;
         //this.device_id = "736893c70c440b9e727b17ad95cfa8fc8d52e959";
         //this.device_id = "9bd9d72d9d1fde992f9ff70832230b8a1898f45e";
         //this.device_id = "14fddc193f451b8dcb01daf0982afd8d4c94bd23";
         this.stateKey = "spotify_auth_state";
+        console.log(this.redirect_uri);
     }
 
     getAccessToken = function () {
@@ -73,9 +75,9 @@ export class Spotify {
     callback = async function (code: any) {
         // your application requests refresh and access tokens
         // after checking the state parameter
-        var url = "https://accounts.spotify.com/api/token";
+        const url = process.env.SPOTIFY_TOKEN_URL;
         var authOptions = {
-            url: url,
+            url,
             headers: {
                 Authorization:
                     "Basic " +
@@ -489,7 +491,7 @@ export class Spotify {
         return response.data;
     };
 
-    createTab = async function() {
+    createTab = async function () {
         await open('https://open.spotify.com/');
     }
 }
