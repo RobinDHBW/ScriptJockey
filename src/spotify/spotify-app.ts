@@ -1,5 +1,6 @@
 import axios from "axios";
 import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node";
+import open from 'open';
 
 export class Spotify {
     client_id: string;
@@ -327,7 +328,8 @@ export class Spotify {
                 album: response.data.item.album.name,
                 duration: _this.calculateDuration(response.data.item.duration_ms),
                 progress: _this.calculateDuration(response.data.progress_ms),
-                isPlaying: response.data.is_playing
+                isPlaying: response.data.is_playing,
+                playlist_id: response.data.context.uri.split(":")[2]
             };
             this.device_id = response.data.device.id;
             return currentlyPlaying;
@@ -381,6 +383,7 @@ export class Spotify {
     };
 
     transferPlayback = async function (id: string) {
+        this.device_id = id;
         var url = "https://api.spotify.com/v1/me/player";
         var options = {
             url: url,
@@ -391,12 +394,11 @@ export class Spotify {
             "device_ids": [
                 id
             ],
-            play: true
+            play: false
         }
 
         const response = await axios.put(url, body, options);
 
-        this.device_id = id;
         return {
             message: "playback switched"
         };
@@ -516,4 +518,8 @@ export class Spotify {
         //this.device_id = response.data.device.id;
         return response.data;
     };
+
+    createTab = async function() {
+        await open('https://open.spotify.com/');
+    }
 }
