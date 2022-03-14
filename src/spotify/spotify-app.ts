@@ -1,5 +1,4 @@
 import axios from "axios";
-import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node";
 import open from 'open';
 
 export class Spotify {

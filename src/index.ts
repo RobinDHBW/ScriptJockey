@@ -6,7 +6,6 @@ import path from "path";
 import 'dotenv/config';
 import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
-import "spotify-playback-sdk-node";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 
@@ -50,6 +49,22 @@ import { GeniusApi } from './genius/genius-app';
         app.get('/', async function (request, response) {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/index.html"));
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        app.get('/fe/start', async function (request, response) {
+            try {
+                return response.sendFile(path.resolve(__dirname + "/frontend/html/start.html"));
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        app.get('/fe/backroom-poker', async function (request, response) {
+            try {
+                return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
             } catch (e) {
                 console.error(e);
             }
@@ -195,7 +210,7 @@ import { GeniusApi } from './genius/genius-app';
         });
 
 
-        app.use(express.static(path.normalize(__dirname + "/frontend/")));
+        app.use(express.static(path.join(__dirname + "/frontend/")));
         const io = new Server(server);
         io.on("connection", (socket) => {
             console.log("Socket connected");

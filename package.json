@@ -22,7 +22,6 @@
     "genius-lyrics-api": "^3.2.0",
     "open": "^8.4.0",
     "socket.io": "^4.4.1",
-    "spotify-playback-sdk-node": "https://gitpkg.now.sh/RobinDHBW/spotify-playback-sdk-node/lib?main",
     "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
