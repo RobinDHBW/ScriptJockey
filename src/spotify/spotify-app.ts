@@ -193,7 +193,8 @@ export class Spotify {
                         id: item.track.id,
                         artist: artists,
                         album: item.track.album.name,
-                        duration: _this.calculateDuration(item.track.duration_ms)
+                        duration: _this.calculateDuration(item.track.duration_ms),
+                        votes: 0
                     });
                 });
             }
