@@ -133,7 +133,6 @@ export class GeniusApi {
                     var lyricurl = "https://genius.com" + hits[i].result.path;
                     var lyric = await this.genius.getLyrics(lyricurl);
                     return {
-                        status: 200,
                         lyrics: lyric
                     };
                 }
@@ -148,21 +147,18 @@ export class GeniusApi {
                     var lyricurl = "https://genius.com" + hits[i].result.path;
                     var lyric = await this.genius.getLyrics(lyricurl);
                     return {
-                        status: 200,
                         lyrics: lyric
                     };
                 }
 
             }
             return {
-                status: 404,
-                message: "title not found"
+                lyrics: null
             };
 
         } catch (error) {
             return {
-                status: 404,
-                message: error.message
+                lyrics: null
             }
         }
 

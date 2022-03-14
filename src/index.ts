@@ -202,8 +202,7 @@ import { GeniusApi } from './genius/genius-app';
                 res.json(await gApiAccess.getLyrics(req));
             } catch (error) {
                 console.error(error);
-                res.json({
-                    status: 404,
+                res.status(404).json({
                     message: error.message,
                 });
             }
