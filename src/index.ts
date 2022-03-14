@@ -28,6 +28,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         const swaggerDocument: JSON = require('../src/openapi.json');
         app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
         let timerId: any;
+        let djInTheHouse = false;
 
         //app.use(express.static(__dirname + '/public'));        
         app.use(cookieParser());
@@ -67,11 +68,14 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             try {
                 if (request.cookies && request.cookies["spotify_auth_state"]) {
                     return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
-                } else {
+                } else if(!djInTheHouse) {
                     const state: string = spotifyAPI.generateRandomString(16);
                     response.status(250); //Own defined to check in Frontend
                     response.cookie("spotify_auth_state", state);
                     return response.send(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString())
+                }else{
+                    response.status(330); //Own set
+                    response.send({access: false});
                 }
             } catch (e) {
                 console.error(e);
@@ -97,6 +101,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                     // var responseUrl = new URLSearchParams({ error: "state_mismatch" });
                     //  response.redirect("/#" + responseUrl.toString());
                 } else {
+                    djInTheHouse = true;
                     clearInterval(timerId);
                     timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
                     // response.clearCookie("spotify_auth_state");
@@ -127,11 +132,13 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.send(await spotifyAPI.getPlayer());
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
+                // response.status(error.response.data.error.status).send({
+                //     status: error.response.data.error.status || error.response.status,
+                //     statusText: error.response.statusText,
+                //     message: error.response.data.error.message
+                // });
             }
         });
 

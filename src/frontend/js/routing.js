@@ -41,24 +41,6 @@ class Scratcher {
                 } catch (e) { console.error(e) }
             })
         } catch (e) { console.error(e) }
-    }
-
-    /**
-     * 
-     */
-    async postAuthSuccess() {
-        try {
-            $.post("url", data,
-                async function (data, status, xhr) {
-                    try {
-
-                    } catch (error) {
-                        console.error(error);
-                    }
-                });
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    }   
 
 }

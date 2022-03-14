@@ -5,7 +5,7 @@ class MainController {
 
     }
 
-    async initID3Array() {
+    async initPlaylist() {
         try {
             // const automatedid3List = $("#automatedID3List")
             $("#automatedID3Table").empty();
@@ -17,7 +17,7 @@ class MainController {
             }
 
             $("#spinning-sheep-gatter").attr('style', 'display: flex !important');
-            $.get("/id3", (data, status) => {
+            $.get("/playlist", (data, status) => {
                 // console.log(data, status);
                 // const id3Array = JSON.parse(data);
                 $("#spinning-sheep-gatter").attr('style', 'display: none !important');

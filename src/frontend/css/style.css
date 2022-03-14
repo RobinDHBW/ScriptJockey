@@ -99,3 +99,8 @@ a {
     color: #555;
     border-color: #818d39;
 }
+
+.btn-primary, .btn-primary:hover{
+    background-color: #818d39 !important;
+    border-color: #818d39 !important;
+}
