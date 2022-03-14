@@ -10,6 +10,7 @@ import "spotify-playback-sdk-node";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 
+
 (async function () {
     try {
 
@@ -71,6 +72,7 @@ import { GeniusApi } from './genius/genius-app';
         });
 
         const spotifyAPI = new Spotify();
+        //await spotifyAPI.createTab();
 
         app.get("/login", function (request, response) {
             var state = spotifyAPI.generateRandomString(16);
@@ -80,6 +82,7 @@ import { GeniusApi } from './genius/genius-app';
             );
             clearInterval(timerId);
             timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
+            
         });
 
 
@@ -99,14 +102,6 @@ import { GeniusApi } from './genius/genius-app';
                 }
             } catch (error) {
                 console.error(error);
-            }
-        });
-
-        app.get("/test", async function (request, response) {
-            try {
-                await spotifyAPI.test();
-            } catch (ex) {
-                console.error(ex);
             }
         });
 

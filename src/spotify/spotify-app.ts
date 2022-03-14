@@ -1,5 +1,6 @@
 import axios from "axios";
 import { SpotifyPlaybackSDK } from "spotify-playback-sdk-node";
+import open from 'open';
 
 export class Spotify {
     client_id: string;
@@ -21,35 +22,6 @@ export class Spotify {
         //this.device_id = "9bd9d72d9d1fde992f9ff70832230b8a1898f45e";
         //this.device_id = "14fddc193f451b8dcb01daf0982afd8d4c94bd23";
         this.stateKey = "spotify_auth_state";
-    }
-
-    test = async function () {
-        var _this = this;
-        const spotify = new SpotifyPlaybackSDK();
-        await spotify.init();
-
-        const player = await spotify.createPlayer({
-            name: "Web",
-            getOAuthToken() {
-                return _this.access_token;
-            },
-        });
-
-
-        const stream = await player.getAudio();
-        const connected = await player.connect();
-        if (!connected) throw "couldn't connect";
-
-        player.on("ready", console.log);
-        player.on("not_ready", console.log);
-        player.on("player_state_changed", console.log);
-        player.on("initialization_error", console.log);
-        player.on("authentication_error", console.log);
-        player.on("account_error", console.log);
-        player.on("playback_error", console.log);
-
-
-        console.log("connected", stream);
     }
 
     getAccessToken = function () {
@@ -327,7 +299,8 @@ export class Spotify {
                 album: response.data.item.album.name,
                 duration: _this.calculateDuration(response.data.item.duration_ms),
                 progress: _this.calculateDuration(response.data.progress_ms),
-                isPlaying: response.data.is_playing
+                isPlaying: response.data.is_playing,
+                playlist_id: response.data.context.uri.split(":")[2]
             };
             this.device_id = response.data.device.id;
             return currentlyPlaying;
@@ -381,6 +354,7 @@ export class Spotify {
     };
 
     transferPlayback = async function (id: string) {
+        this.device_id = id;
         var url = "https://api.spotify.com/v1/me/player";
         var options = {
             url: url,
@@ -391,12 +365,11 @@ export class Spotify {
             "device_ids": [
                 id
             ],
-            play: true
+            play: false
         }
 
         const response = await axios.put(url, body, options);
 
-        this.device_id = id;
         return {
             message: "playback switched"
         };
@@ -516,4 +489,8 @@ export class Spotify {
         //this.device_id = response.data.device.id;
         return response.data;
     };
+
+    createTab = async function() {
+        await open('https://open.spotify.com/');
+    }
 }
