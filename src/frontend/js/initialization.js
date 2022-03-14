@@ -3,14 +3,8 @@ $(document).ready(async () => {
     try {
         router.getStart();
 
-        //TODO do we need to ask for setup or just fetch the playlist --> Message if empty?
-        // $.get("/", async (data, status) => {
-        //     try {
-        //         if (status === "success") {
-                    
-        //         }
-        //     } catch (e) { console.error(e) }
-        // })
+        //Toggle message initialization process
+        
 
         $('#searchInput').on('keyup', function () {
             const value = $(this).val().toLowerCase();

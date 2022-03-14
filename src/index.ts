@@ -8,6 +8,7 @@ import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
+import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
 
 (async function () {
@@ -22,10 +23,10 @@ import { GeniusApi } from './genius/genius-app';
         const server = http.createServer(app);
         const gApiAccess = new GeniusApi();
 
-        const swaggerUi = require('swagger-ui-express');
-        const swaggerDocument = require('../src/openapi.json');
+        const swaggerUi:SwaggerOptions = require('swagger-ui-express');
+        const swaggerDocument:JSON = require('../src/openapi.json');
         app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-        var timerId: any;
+        var timerId: string;
 
         //app.use(express.static(__dirname + '/public'));
         //app.use(cors());
@@ -42,11 +43,13 @@ import { GeniusApi } from './genius/genius-app';
         REST-Api Hooks
         **************************/
 
+        let isAuthenticated:boolean = false;
+
         /**
         * initial hook
         * send startpage
         */
-        app.get('/', async function (request, response) {
+        app.get('/', async function (request: express.Request, response: express.Response) {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/index.html"));
             } catch (e) {
@@ -54,7 +57,7 @@ import { GeniusApi } from './genius/genius-app';
             }
         });
 
-        app.get('/fe/start', async function (request, response) {
+        app.get('/fe/start', async function (request: express.Request, response: express.Response) {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/html/start.html"));
             } catch (e) {
@@ -62,26 +65,43 @@ import { GeniusApi } from './genius/genius-app';
             }
         });
 
-        app.get('/fe/backroom-poker', async function (request, response) {
+        app.get('/fe/backroom-poker', async function (request: express.Request, response: express.Response) {
             try {
-                return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
+                if (!isAuthenticated) {
+                    const state:string = spotifyAPI.generateRandomString(16);
+                    response.status(250); //Own defined to check in Frontend
+                    return response.send(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString())
+                } else {
+                    return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
+                }
             } catch (e) {
                 console.error(e);
             }
         });
 
+        app.post('/fe/auth-success', async function (request: express.Request, response: express.Response) {
+            try {
+                isAuthenticated = true;
+
+            } catch (error) {
+                console.error(error);
+
+            }
+
+        })
+
         const spotifyAPI = new Spotify();
         //await spotifyAPI.createTab();
 
         app.get("/login", function (request, response) {
-            var state = spotifyAPI.generateRandomString(16);
+            const state = spotifyAPI.generateRandomString(16);
             response.cookie("spotify_auth_state", state);
             response.redirect(
-                "https://accounts.spotify.com/authorize?" + spotifyAPI.login(state).toString()
+                process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString()
             );
-            clearInterval(timerId);
-            timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
-            
+           // clearInterval(timerId);
+           // timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
+
         });
 
 
