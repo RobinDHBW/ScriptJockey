@@ -69,8 +69,6 @@ import { GeniusApi } from './genius/genius-app';
             
         });
 
-
-
         app.get("/callback", async function (request, response) {
             try {
                 var code = request.query.code || null;
@@ -89,48 +87,9 @@ import { GeniusApi } from './genius/genius-app';
             }
         });
 
-        /*app.get("/refresh_token", async function (request, response) {
-            try {
-                var refresh_token = request.query.refresh_token;
-                response.send({
-                    access_token: await spotifyAPI.refreshToken(refresh_token)
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        });*/
-
         app.get("/playlists/:playlist_id", async function (request, response) {
             try {
                 response.json(await spotifyAPI.getPlaylist(request.params.playlist_id));
-            } catch (error) {
-                console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
-            }
-        });
-
-        app.get("/users/:user_id/playlists", async function (request, response) {
-            try {
-                response.send(await spotifyAPI.getUserPlaylists(request.params.user_id));
-            } catch (error) {
-                console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
-            }
-        });
-
-        app.get("/search/:track/:artist?", async function (request, response) {
-            try {
-                var track = request.params.track;
-                var artist = request.params.artist;
-                response.send(await spotifyAPI.searchTrack(track, artist));
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({
@@ -194,75 +153,10 @@ import { GeniusApi } from './genius/genius-app';
             }
         });
 
-        /*app.get("/currentlyPlaying", async function (request, response) {
-            try {
-                response.send(await spotifyAPI.currentlyPlaying());
-            } catch (error) {
-                console.error(error);
-                response.send({
-                    message: error.message
-                });
-            }
-        });*/
-
-        app.get("/player/queue/:track_id", async function (request, response) {
+        app.post("/player/queue/:track_id", async function (request, response) {
             try {
                 var id = request.params.track_id;
                 response.send(await spotifyAPI.addTracktoQueue(id));
-            } catch (error) {
-                console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
-            }
-        });
-
-        app.get("/player/next", async function (request, response) {
-            try {
-                response.send(await spotifyAPI.nextTrack());
-            } catch (error) {
-                console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
-            }
-        });
-
-        app.get("/player/previous", async function (request, response) {
-            try {
-                response.send(await spotifyAPI.previousTrack());
-            } catch (error) {
-                console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
-            }
-        });
-
-        app.get("/player/repeat/:mode", async function (request, response) {
-            try {
-                var mode = request.params.mode;
-                response.send(await spotifyAPI.setRepeatMode(mode));
-            } catch (error) {
-                console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
-            }
-        });
-
-        app.get("/player/volume/:volume", async function (request, response) {
-            try {
-                var volume = request.params.volume;
-                response.send(await spotifyAPI.setVolume(volume));
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status).send({

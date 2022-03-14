@@ -4,8 +4,6 @@
   "description": "Let em vote. Enjoy yourself.",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./misc/tsc_spotify-sdk.ps1",
-    "prestart": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./misc/cp-fe.ps1",
     "start": "tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

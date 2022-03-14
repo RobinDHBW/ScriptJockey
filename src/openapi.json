@@ -36,7 +36,7 @@
                 "description": "get song lyrics by searching for title and artist",
                 "parameters": [
                     {
-                        "in": null,
+                        "in": "path",
                         "name": "title",
                         "description": "title of the song",
                         "required": true,
@@ -60,26 +60,13 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "string",
-                                    "items": {
-                                        "$ref": "#/components/schemas/lyric"
-                                    }
+                                    "$ref": "#/components/schemas/Lyrics"
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Lyrics not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string",
-                                    "items": {
-                                        "$ref": "#/components/schemas/error"
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Lyrics not found"
                     }
                 }
             }
@@ -239,7 +226,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/currentTrack"
+                                    "$ref": "#/components/schemas/CurrentTrack"
                                 }
                             }
                         }
@@ -284,7 +271,7 @@
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "transfer playback to the given device id and start playback",
+                "description": "transfer playback to the given device id",
                 "parameters": [
                     {
                         "in": "path",
@@ -312,47 +299,10 @@
     },
     "components": {
         "schemas": {
-            "lyric": {
+            "Lyrics": {
                 "type": "object",
                 "properties": {
-                    "status": {
-                        "type": "integer"
-                    },
                     "lyrics": {
-                        "type": "string"
-                    }
-                }
-            },
-            "error": {
-                "type": "object",
-                "properties": {
-                    "status": {
-                        "type": "integer"
-                    },
-                    "message": {
-                        "type": "string"
-                    }
-                }
-            },
-            "Track": {
-                "type": "object",
-                "properties": {
-                    "track": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "artists": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "album": {
-                        "type": "string"
-                    },
-                    "duration": {
                         "type": "string"
                     }
                 }
@@ -377,7 +327,7 @@
                     }
                 }
             },
-            "currentTrack": {
+            "CurrentTrack": {
                 "type": "object",
                 "properties": {
                     "track": {
@@ -409,6 +359,9 @@
                     },
                     "isPlayed": {
                         "type": "boolean"
+                    },
+                    "playlist_id": {
+                        "type": "string"
                     }
                 }
             },

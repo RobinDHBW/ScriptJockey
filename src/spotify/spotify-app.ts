@@ -211,67 +211,6 @@ export class Spotify {
         );
     };
 
-    getUserPlaylists = async function (id: string) {
-        var playlists = Array<any>();
-        var url = "https://api.spotify.com/v1/users/" + id + "/playlists";
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.get(url, options);
-        response.data.items.forEach(function (item: any) {
-            playlists.push({
-                name: item.name,
-                description: item.description,
-                id: item.id,
-                tracks: item.tracks.total,
-                owner: item.owner.display_name,
-            });
-        });
-        return playlists;
-    };
-
-    searchTrack = async function (track: string, artist: string) {
-        var _this = this;
-        var result;
-        const artists = Array<string>();
-        if (!artist) {
-            var url =
-                "https://api.spotify.com/v1/search/?q=track:" +
-                track +
-                "&type=track";
-        } else {
-            var url =
-                "https://api.spotify.com/v1/search/?q=track:" +
-                track + '+artist:' + artist +
-                "&type=track";
-        }
-
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.get(url, options);
-
-        response.data.tracks.items[0].artists.forEach((artist: any) =>
-            artists.push(artist.name)
-        );
-        result = {
-            track: response.data.tracks.items[0].name,
-            id: response.data.tracks.items[0].id,
-            artists: artists,
-            album: response.data.tracks.items[0].album.name,
-            duration: _this.calculateDuration(
-                response.data.tracks.items[0].duration_ms
-            ),
-        };
-        return result;
-    };
-
     getPlayer = async function () {
         var _this = this;
         var currentlyPlaying = new Object();
@@ -375,17 +314,6 @@ export class Spotify {
         };
     }
 
-    /*currentlyPlaying = async function() {
-        var url = "https://api.spotify.com/v1/me/player/currently-playing";
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-        const response = await axios.get(url, options);
-        return response.data; 
-    }*/
-
     addTracktoQueue = async function (id: string) {
         var url =
             "https://api.spotify.com/v1/me/player/queue?uri=spotify:track:" +
@@ -405,78 +333,6 @@ export class Spotify {
         };
     };
 
-    nextTrack = async function () {
-        var url =
-            "https://api.spotify.com/v1/me/player/next?device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.post(url, null, options);
-
-        return {
-            message: "successfully skipped",
-        };
-    };
-
-    previousTrack = async function () {
-        var url =
-            "https://api.spotify.com/v1/me/player/previous?device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.post(url, null, options);
-
-        return {
-            message: "successfully jumped back",
-        };
-    };
-
-    setRepeatMode = async function (mode: string) {
-        var url =
-            "https://api.spotify.com/v1/me/player/repeat?state=" +
-            mode +
-            "&device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.put(url, null, options);
-
-        return {
-            message: "set repeat-mode successfully to " + mode,
-        };
-    };
-
-    setVolume = async function (volume: string) {
-        var url =
-            "https://api.spotify.com/v1/me/player/volume?volume_percent=" +
-            volume +
-            "&device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.put(url, null, options);
-
-        return {
-            message: "successfully changed volume to " + volume + "%",
-        };
-    };
-
     getDevices = async function () {
         var url = "https://api.spotify.com/v1/me/player/devices";
         var options = {
@@ -490,7 +346,7 @@ export class Spotify {
         return response.data;
     };
 
-    createTab = async function() {
+    createTab = async function () {
         await open('https://open.spotify.com/');
     }
 }
