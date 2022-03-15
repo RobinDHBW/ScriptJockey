@@ -104,7 +104,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             try {
                 spotifyAPI.upvote(request.body.id);
                 //TODO socket push -> Update all playlists
-                return response.send("success");
+                return response.send("done");
             } catch (error) {
                 console.error(error);
                 response.status(501);

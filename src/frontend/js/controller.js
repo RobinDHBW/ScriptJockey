@@ -29,10 +29,10 @@ class MainController {
                     const tbody = $("#automatedID3Table");
                     data.forEach((item, index) => {
                         const tr = $("<tr class='id3table-row'></tr>").appendTo(tbody);
-                        $(`<td class="text-center" id='${index}_title'>${item.track}</td>`).appendTo(tr);
-                        $(`<td class="text-center" id='${index}_artist'>${item.artist}</td>`).appendTo(tr);
-                        $(`<td class="text-center" id='${index}_album'>${item.album}</td>`).appendTo(tr);
-                        $(`<td class="text-center" id='${index}_vote'>${item.votes}</td>`).appendTo(tr);
+                        $(`<td class="text-center" id='${index}-title'>${item.track}</td>`).appendTo(tr);
+                        $(`<td class="text-center" id='${index}-artist'>${item.artist}</td>`).appendTo(tr);
+                        $(`<td class="text-center" id='${index}-album'>${item.album}</td>`).appendTo(tr);
+                        $(`<td class="text-center" id='${index}-vote'>${item.votes}</td>`).appendTo(tr);
 
                         // // imageBuffer to blob - not properly working
                         // if (item.image) {
@@ -44,11 +44,15 @@ class MainController {
 
                         tr.click(() => {
                             item.votes++;
-                            $.post('/fe/upvote', {id: item.id}, async (data, status) => {
-                                if (data === "done") {
-                                    $('#' + index + '_vote').html(item.vote);
-                                } else {
-                                    item.votes--;
+                            $.post('/fe/upvote', { id: item.id }, async (data) => {
+                                try {
+                                    if (data === "done") {
+                                        $('#' + index + '-vote').html(item.votes);
+                                    } else {
+                                        item.votes--;
+                                    }
+                                } catch (e) {
+                                    console.error(e);
                                 }
                             })
                         })
