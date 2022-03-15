@@ -21,6 +21,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         **************************/
         const app = express();
         const server = http.createServer(app);
+        const io = new Server(server);
         const gApiAccess = new GeniusApi();
         let spotifyAPI: Spotify;
 
@@ -91,11 +92,13 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         app.get('/fe/sync', async (request: express.Request, response: express.Response) => {
             try {
                 if (!djInTheHouse) throw new Error("Not authenticated yet!");
+                const playList = await spotifyAPI.getPlaylist();
+                if(Array.isArray(playList)) return response.send(playList);
                 const currentTrack: any = await spotifyAPI.getPlayer();
-                return response.send(await spotifyAPI.getPlaylist(currentTrack.playlist_id));
+                return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));
             } catch (e) {
-                console.error(e);
-                response.status(550);
+                console.error(e);                
+                if(e.message === "Not authenticated yet!") response.status(550);
                 response.send(e.message);
             }
         });
@@ -103,6 +106,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         app.post('/fe/upvote', async (request: express.Request, response: express.Response) => {
             try {
                 spotifyAPI.upvote(request.body.id);
+                io.emit("update_playlist", await spotifyAPI.getPlaylist())
                 //TODO socket push -> Update all playlists
                 return response.send("done");
             } catch (error) {
@@ -147,7 +151,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
         app.get("/playlists/:playlist_id", async function (request, response) {
             try {
-                response.json(await spotifyAPI.getPlaylist(request.params.playlist_id));
+                response.json(await spotifyAPI.fetchPlaylist(request.params.playlist_id));
             } catch (error) {
                 console.error(error);
                 response.status(error.response.data.error.status)
@@ -259,8 +263,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         });
 
 
-        app.use(express.static(path.join(__dirname + "/frontend/")));
-        const io = new Server(server);
+        app.use(express.static(path.join(__dirname + "/frontend/")));        
         io.on("connection", (socket) => {
             console.log("Socket connected");
         });

@@ -159,7 +159,7 @@ export class Spotify {
         }
     };
 
-    getPlaylist = async function (id: string) {
+    fetchPlaylist = async function (id: string) {
         try {
             this.playlistContent = new Array<Object>();
             var _this = this;
@@ -362,6 +362,16 @@ export class Spotify {
             track.votes++;
         } catch (e) {
             console.error(e);
+        }
+    }
+
+    async getPlaylist(){
+        try {
+            if(!Array.isArray(this.playlistContent) || this.playlistContent.length === 0) throw new Error("Playlist empty - fetch first!");
+            return this.playlistContent;
+        } catch (error) {
+            console.error(error);
+            return null;
         }
     }
 }

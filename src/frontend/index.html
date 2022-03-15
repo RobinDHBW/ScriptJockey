@@ -30,10 +30,12 @@
     <script src="./js/controller.js"></script>
     <script src="./js/initialization.js"></script>
     <script src="./js/routing.js"></script>
-    <script>        
+    <script src="./js/socketListener.js"></script>
+    <script>                
         const socketIO = io();
         const router = new Scratcher();
         const mainController = new MainController(router);                
+        const socketIOListener = new SocketIOListener(socketIO, mainController);
     </script>
 </head>
 
