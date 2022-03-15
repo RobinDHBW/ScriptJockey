@@ -271,7 +271,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         io.on("connection", (socket) => {
             console.log("Socket connected");
         });
-        server.listen({ port: process.env.SERVERPORT, host: 'localhost' }, async function () {
+        server.listen({ port: process.env.SERVERPORT, host: process.env.SERVERIP }, async function () {
             try {
                 spotifyAPI = new Spotify(JSON.stringify(server.address()));
                 console.log(`started && running @ port ${process.env.SERVERPORT}`);
