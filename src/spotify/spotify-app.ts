@@ -199,11 +199,6 @@ export class Spotify {
                         votes: 0
                     });
                 }
-
-                response.data.items.forEach(function (item: any) {
-
-                });
-
             }
             return _this.playlistContent;
         } catch (ex) {

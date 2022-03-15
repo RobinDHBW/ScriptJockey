@@ -6,6 +6,11 @@ class MainController {
         this.#router = router
     }
 
+    async errorMessage() {
+        $("#spinning-sheep-gatter").attr('style', 'display: none !important');
+        $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>Error</strong> | Fetch data from server failed!</div>`))
+    }
+
     async initPlaylist() {
         try {
             await this.#router.getStart();
@@ -15,11 +20,12 @@ class MainController {
             }
 
             $("#spinning-sheep-gatter").attr('style', 'display: flex !important');
-            $.get("/fe/sync", (data, status) => {
-                // console.log(data, status);
-                // const id3Array = JSON.parse(data);
-                $("#spinning-sheep-gatter").attr('style', 'display: none !important');
-                if (status === "success" && Array.isArray(data)) {
+            $.get("/fe/sync", async (data) => {
+                try {
+                    // console.log(data, status);
+                    // const id3Array = JSON.parse(data);
+                    $("#spinning-sheep-gatter").attr('style', 'display: none !important');
+                    if (!Array.isArray(data)) throw new Error("Wrong datatype - Array needed!");
                     const tbody = $("#automatedID3Table");
                     data.forEach((item, index) => {
                         const tr = $("<tr class='id3table-row'></tr>").appendTo(tbody);
@@ -47,14 +53,23 @@ class MainController {
                             })
                         })
                     })
-                } else {
-                    $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>${status}</strong> | Fetch data from server failed!</div>`))
+                } catch (e) {
+                    console.error(e);
+                    this.errorMessage();
                 }
-            })
-        } catch (e) { 
+            }).fail(async () => {
+                try {
+                    throw new Error("Request failed!");
+                } catch (error) {
+                    console.error(error)
+                    this.errorMessage();
+                }
+            });
+        } catch (e) {
             console.error(e)
-            $("#spinning-sheep-gatter").attr('style', 'display: none !important');
-         }
+            this.errorMessage();
+
+        }
 
     }
 

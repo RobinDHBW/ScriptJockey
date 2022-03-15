@@ -84,12 +84,13 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
         app.get('/fe/sync', async function (request: express.Request, response: express.Response) {
             try {
-                var currentTrack:any = await spotifyAPI.getPlayer();
-               
-                //TODO spotify api --> get actual playlist
+                if(!djInTheHouse) throw new Error("Not authenticated yet!");
+                const currentTrack:any = await spotifyAPI.getPlayer();               
                 return response.send(await spotifyAPI.getPlaylist(currentTrack.playlist_id));
             } catch (e) {
                 console.error(e);
+                response.status(550);
+                response.send(e.message);
             }
         });
 

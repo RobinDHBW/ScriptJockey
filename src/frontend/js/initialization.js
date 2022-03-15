@@ -2,6 +2,7 @@
 $(document).ready(async () => {
     try {
         router.getStart();
+        mainController.initPlaylist();
 
         //Toggle message initialization process
         
