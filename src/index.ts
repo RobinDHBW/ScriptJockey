@@ -93,12 +93,16 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             try {
                 if (!djInTheHouse) throw new Error("Not authenticated yet!");
                 const playList = await spotifyAPI.getPlaylist();
-                if(Array.isArray(playList)) return response.send(playList);
+                if (Array.isArray(playList)) return response.send(playList);
                 const currentTrack: any = await spotifyAPI.getPlayer();
                 return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));
             } catch (e) {
-                console.error(e);                
-                if(e.message === "Not authenticated yet!") response.status(550);
+                if (e.message === "Not authenticated yet!") {
+                    response.status(550);
+                } else {
+                    console.error(e);
+                }
+
                 response.send(e.message);
             }
         });
@@ -139,8 +143,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                     clearInterval(timerId);
                     timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
                     // response.clearCookie("spotify_auth_state");
-                    spotifyAPI.callback(code);                    
-                    response.redirect("/#");                    
+                    spotifyAPI.callback(code);
+                    response.redirect("/#");
                 }
             } catch (error) {
                 console.error(error);
@@ -263,7 +267,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         });
 
 
-        app.use(express.static(path.join(__dirname + "/frontend/")));        
+        app.use(express.static(path.join(__dirname + "/frontend/")));
         io.on("connection", (socket) => {
             console.log("Socket connected");
         });
