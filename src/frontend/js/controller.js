@@ -23,10 +23,10 @@ class MainController {
                     const tbody = $("#automatedID3Table");
                     data.forEach((item, index) => {
                         const tr = $("<tr class='id3table-row'></tr>").appendTo(tbody);
-                        $(`<td class="text-center" id='${index}_title'>${item.title}</td>`).appendTo(tr);
+                        $(`<td class="text-center" id='${index}_title'>${item.track}</td>`).appendTo(tr);
                         $(`<td class="text-center" id='${index}_artist'>${item.artist}</td>`).appendTo(tr);
                         $(`<td class="text-center" id='${index}_album'>${item.album}</td>`).appendTo(tr);
-                        $(`<td class="text-center" id='${index}_vote'>${item.vote}</td>`).appendTo(tr);
+                        $(`<td class="text-center" id='${index}_vote'>${item.votes}</td>`).appendTo(tr);
 
                         // // imageBuffer to blob - not properly working
                         // if (item.image) {

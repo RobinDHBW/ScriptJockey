@@ -115,7 +115,7 @@ export class Spotify {
                 "https://api.spotify.com/v1/me",
                 options
             );
-            console.log(response2.data);
+            // console.log(response2.data);
 
             // we can also pass the token to the browser to make requests from there
             var redirectUrl = new URLSearchParams({
@@ -160,30 +160,32 @@ export class Spotify {
     };
 
     getPlaylist = async function (id: string) {
-        this.playlistContent = new Array<Object>();
-        var _this = this;
-        var hasNext = true;
-        var url =
-            "https://api.spotify.com/v1/playlists/" +
-            id +
-            "/tracks?limit=100&offset=0";
+        try {
+            this.playlistContent = new Array<Object>();
+            var _this = this;
+            var hasNext = true;
+            var url =
+                "https://api.spotify.com/v1/playlists/" +
+                id +
+                "/tracks?limit=100&offset=0";
 
-        while (hasNext) {
-            var options = {
-                url: url,
-                headers: { Authorization: "Bearer " + this.access_token },
-                json: true,
-            };
+            while (hasNext) {
+                var options = {
+                    url: url,
+                    headers: { Authorization: "Bearer " + this.access_token },
+                    json: true,
+                };
 
-            const response = await axios.get(url, options);
-            if (!response.data.next) {
-                hasNext = false;
-            } else {
-                url = response.data.next;
-            }
+                const response = await axios.get(url, options);
+                if (!response.data.next) {
+                    hasNext = false;
+                } else {
+                    url = response.data.next;
+                }
 
-            if (response.data.items !== undefined) {
-                response.data.items.forEach(function (item: any) {
+                if (!Array.isArray(response.data.items)) throw new Error("No data fetched!");
+                for (const item of response.data.items) {
+                    if(!item.track) continue;                    
                     const artists = Array<string>();
                     item.track.artists.forEach((artist: any) =>
                         artists.push(artist.name)
@@ -196,10 +198,18 @@ export class Spotify {
                         duration: _this.calculateDuration(item.track.duration_ms),
                         votes: 0
                     });
+                }
+
+                response.data.items.forEach(function (item: any) {
+
                 });
+
             }
+            return _this.playlistContent;
+        } catch (ex) {
+            console.error(ex);
+            return null;
         }
-        return _this.playlistContent;
     };
 
     calculateDuration = function (duration: number) {
