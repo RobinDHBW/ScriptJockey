@@ -7,7 +7,7 @@ export class Spotify {
     redirect_uri: string;
     access_token: string;
     refresh_token: string;
-    playlistContent: Array<Object>;
+    playlistContent: Array<any>;
     device_id: string;
     stateKey: string;
 
@@ -185,7 +185,7 @@ export class Spotify {
 
                 if (!Array.isArray(response.data.items)) throw new Error("No data fetched!");
                 for (const item of response.data.items) {
-                    if(!item.track) continue;                    
+                    if (!item.track) continue;
                     const artists = Array<string>();
                     item.track.artists.forEach((artist: any) =>
                         artists.push(artist.name)
@@ -354,5 +354,14 @@ export class Spotify {
 
     createTab = async function () {
         await open('https://open.spotify.com/');
+    }
+
+    async upvote(track_id: string) {
+        try {
+            const track = this.playlistContent.find(item => item.id === track_id);
+            track.votes++;
+        } catch (e) {
+            console.error(e);
+        }
     }
 }

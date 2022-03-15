@@ -44,7 +44,7 @@ class MainController {
 
                         tr.click(() => {
                             item.vote++;
-                            $.post('/upvote', item, async (data, status) => {
+                            $.post('/fe/upvote', {id: item.id}, async (data, status) => {
                                 if (data === "done") {
                                     $('#' + index + '_vote').html(item.vote);
                                 } else {

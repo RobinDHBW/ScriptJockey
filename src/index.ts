@@ -38,7 +38,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             extended: true
         }));
         app.use(bodyParser.json({
-        }));        
+        }));
 
         /**************************
         REST-Api Hooks
@@ -48,44 +48,50 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         * initial hook
         * send startpage
         */
-        app.get('/', async function (request: express.Request, response: express.Response) {
+        app.get('/', async (request: express.Request, response: express.Response) => {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/index.html"));
             } catch (e) {
                 console.error(e);
+                response.status(501);
+                response.send(e.message);
             }
         });
 
-        app.get('/fe/start', async function (request: express.Request, response: express.Response) {
+        app.get('/fe/start', async (request: express.Request, response: express.Response) => {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/html/start.html"));
             } catch (e) {
                 console.error(e);
+                response.status(501);
+                response.send(e.message);
             }
         });
 
-        app.get('/fe/backroom-poker', async function (request: express.Request, response: express.Response) {
+        app.get('/fe/backroom-poker', async (request: express.Request, response: express.Response) => {
             try {
                 if (request.cookies && request.cookies["spotify_auth_state"] && djInTheHouse) {
                     return response.sendFile(path.resolve(__dirname + "/frontend/html/backroom.html"));
-                } else if(!djInTheHouse) {
+                } else if (!djInTheHouse) {
                     const state: string = spotifyAPI.generateRandomString(16);
                     response.status(250); //Own defined to check in Frontend
                     response.cookie("spotify_auth_state", state);
                     return response.send(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString())
-                }else{
+                } else {
                     response.status(330); //Own set
-                    response.send({access: false});
+                    response.send({ access: false });
                 }
             } catch (e) {
                 console.error(e);
+                response.status(501);
+                response.send(e.message);
             }
         });
 
-        app.get('/fe/sync', async function (request: express.Request, response: express.Response) {
+        app.get('/fe/sync', async (request: express.Request, response: express.Response) => {
             try {
-                if(!djInTheHouse) throw new Error("Not authenticated yet!");
-                const currentTrack:any = await spotifyAPI.getPlayer();               
+                if (!djInTheHouse) throw new Error("Not authenticated yet!");
+                const currentTrack: any = await spotifyAPI.getPlayer();
                 return response.send(await spotifyAPI.getPlaylist(currentTrack.playlist_id));
             } catch (e) {
                 console.error(e);
@@ -93,6 +99,18 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.send(e.message);
             }
         });
+
+        app.post('/fe/upvote', async (request: express.Request, response: express.Response) => {
+            try {
+                spotifyAPI.upvote(request.body.id);
+                //TODO socket push -> Update all playlists
+                return response.send("success");
+            } catch (error) {
+                console.error(error);
+                response.status(501);
+                response.send(error.message);
+            }
+        })
 
 
 
@@ -117,8 +135,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                     clearInterval(timerId);
                     timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
                     // response.clearCookie("spotify_auth_state");
-                    spotifyAPI.callback(code);
-                    response.redirect("/#");
+                    spotifyAPI.callback(code);                    
+                    response.redirect("/#");                    
                 }
             } catch (error) {
                 console.error(error);
@@ -132,7 +150,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.json(await spotifyAPI.getPlaylist(request.params.playlist_id));
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
+                response.status(error.response.data.error.status)
+                response.send({
                     status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
@@ -173,7 +192,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.status(200).send(await spotifyAPI.playPlayer());
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
+                response.status(error.response.data.error.status)
+                response.send({
                     status: error.response.data.error.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
@@ -187,7 +207,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.send(await spotifyAPI.transferPlayback(id));
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
+                response.status(error.response.data.error.status)
+                response.send({
                     status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
@@ -201,7 +222,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.send(await spotifyAPI.addTracktoQueue(id));
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
+                response.status(error.response.data.error.status)
+                response.send({
                     status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
@@ -214,7 +236,8 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                 response.send(await spotifyAPI.getDevices());
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
+                response.status(error.response.data.error.status)
+                response.send({
                     status: error.response.data.error.status || error.response.status,
                     statusText: error.response.statusText,
                     message: error.response.data.error.message
