@@ -228,7 +228,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             }
         });
 
-        app.post("/player/queue/:track_id", async function (request, response) {
+        app.get("/player/queue/:track_id", async function (request, response) {
             try {
                 var id = request.params.track_id;
                 response.send(await spotifyAPI.addTracktoQueue(id));
