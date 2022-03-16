@@ -11,7 +11,7 @@ class MainController {
         $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>Error</strong> | Fetch data from server failed!</div>`))
     }
 
-    async buildTable(data){
+    async buildTable(data) {
         try {
             // console.log(data, status);
             // const id3Array = JSON.parse(data);
@@ -53,24 +53,25 @@ class MainController {
             console.error(e);
             this.errorMessage();
         }
-    
+
     }
 
-    async initPlaylist() {
+    async initPlaylist(force) {
         try {
-            await this.#router.getStart();            
+            await this.#router.getStart();
             if ($("#fetchAlert")) {
                 $("#fetchAlert").parent().find("#fetchAlert").remove();
             }
 
             $("#spinning-sheep-gatter").attr('style', 'display: flex !important');
-            $.get("/fe/sync", async (data) => {
-                try{
+
+            $.get("/fe/sync", { force }, async (data) => {
+                try {
                     this.buildTable(data);
-                }catch(e){ 
+                } catch (e) {
                     console.error(e);
                 }
-               }).fail(async () => {
+            }).fail(async () => {
                 try {
                     throw new Error("Request failed!");
                 } catch (error) {

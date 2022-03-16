@@ -94,9 +94,10 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             try {
                 if (!djInTheHouse) throw new Error("Not authenticated yet!");
                 const playList = await spotifyAPI.getPlaylist();
-                if (Array.isArray(playList)) return response.send(playList);
+                if (!Array.isArray(playList) || request.query.force){
                 const currentTrack: any = await spotifyAPI.getPlayer();
-                return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));
+                return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));}
+                return response.send(playList);
             } catch (e) {
                 if (e.message === "Not authenticated yet!") {
                     response.status(550);
