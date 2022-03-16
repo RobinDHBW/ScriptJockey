@@ -273,13 +273,15 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
         app.use(express.static(path.join(__dirname + "/frontend/")));
         io.on("connection", async (socket) => {
-            // console.log("Socket connected");
+            // console.log("Socket connected");       
+            io.emit("dj_in_the_house", djInTheHouse);     
             if (itsCallbackTime) {
                 itsCallbackTime = false;
                 await new Promise(resolve => setTimeout(resolve, 300)); //Brechstange - Unschön, aber funktioniert^^
                 io.emit("spotify_auth_finished_successful");
             }
         });
+
         server.listen({ port: process.env.SERVERPORT, host: process.env.SERVERIP }, async function () {
             try {
                 spotifyAPI = new Spotify(JSON.stringify(server.address()));
