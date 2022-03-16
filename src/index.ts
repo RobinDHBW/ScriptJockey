@@ -30,6 +30,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
         let timerId: any;
         let djInTheHouse = false;
+        let itsCallbackTime = false;
 
         //app.use(express.static(__dirname + '/public'));        
         app.use(cookieParser());
@@ -144,12 +145,14 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                     timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
                     // response.clearCookie("spotify_auth_state");
                     spotifyAPI.callback(code);
+                    itsCallbackTime = true;
                     response.redirect("/#");
                 }
             } catch (error) {
                 console.error(error);
                 response.status(501);
                 response.send(error);
+                io.emit("spotify_auth_finished_failure", error);
             }
         });
 
@@ -268,8 +271,13 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
 
 
         app.use(express.static(path.join(__dirname + "/frontend/")));
-        io.on("connection", (socket) => {
-            console.log("Socket connected");
+        io.on("connection", async (socket) => {
+            // console.log("Socket connected");
+            if (itsCallbackTime) {
+                itsCallbackTime = false;
+                await new Promise(resolve => setTimeout(resolve, 300)); //Brechstange - Unschön, aber funktioniert^^
+                io.emit("spotify_auth_finished_successful");
+            }
         });
         server.listen({ port: process.env.SERVERPORT, host: process.env.SERVERIP }, async function () {
             try {
