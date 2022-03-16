@@ -4,7 +4,7 @@ class MainController {
 
     constructor(router) {
         this.#router = router
-    }
+    }    
 
     async errorMessage() {
         $("#spinning-sheep-gatter").attr('style', 'display: none !important');
