@@ -108,3 +108,7 @@ a {
 .bg-primary {
     background-color: #1DB954 !important;
 }
+
+#currently-playing-container{
+    display: none !important;
+}

@@ -4,7 +4,7 @@ class MainController {
 
     constructor(router) {
         this.#router = router
-    }    
+    }
 
     async errorMessage() {
         $("#spinning-sheep-gatter").attr('style', 'display: none !important');
@@ -68,6 +68,7 @@ class MainController {
             $.get("/fe/sync", { force }, async (data) => {
                 try {
                     this.buildTable(data);
+                    this.getActualPlaying();
                 } catch (e) {
                     console.error(e);
                 }
@@ -84,7 +85,34 @@ class MainController {
             this.errorMessage();
 
         }
+    }
 
+    async getActualPlaying() {
+        try {
+            $.get("/player", async (data) => {
+                try {
+                    $("#currently-playing-container").attr('style', 'display: flex !important');
+                    let artist = "";
+                    for (const [i, item] of data.artists.entries()) {
+                        const gap = i > 0 ? ", " : "";
+                        artist += gap + item;
+                    }
+                    $("#currently-playing-text").text(`${artist} - ${data.track} | ${data.album}`);
+                } catch (e) {
+                    console.error(e);
+                }
+            }).fail(async () => {
+                try {
+                    throw new Error("Request failed!");
+                } catch (error) {
+                    console.error(error)
+                    // this.errorMessage();
+                }
+            });
+        } catch (error) {
+            console.error(e)
+            // this.errorMessage();
+        }
     }
 
 }
