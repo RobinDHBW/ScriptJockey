@@ -39,7 +39,7 @@
         const utils = new Utils();
         const socketIO = io();
         const router = new Scratcher();
-        const mainController = new MainController(router);
+        const mainController = new MainController(router, utils);
         const socketIOListener = new SocketIOListener(socketIO, mainController, router, utils);
     </script>
 </head>
