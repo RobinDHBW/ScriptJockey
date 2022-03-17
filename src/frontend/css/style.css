@@ -1,13 +1,13 @@
 body {
     font-family: sans-serif;
     font-size: 18px;
-    color: #555;
+    color: #191414;
     font-weight: 200;
     background-color: #ffffff;
 }
 
 a {
-    color: #818d39;
+    color: #1DB954;
 }
 
 .gft-footer {
@@ -21,7 +21,7 @@ a {
 }
 
 .navbar {
-    color: #555;
+    color: #191414;
     border-bottom: 1px solid;
     border-bottom-color: #dddddd;
 }
@@ -96,11 +96,15 @@ a {
 }
 
 .form-control:focus .form-control:active{
-    color: #555;
-    border-color: #818d39;
+    color: #191414;
+    border-color: #1DB954;
 }
 
 .btn-primary, .btn-primary:hover{
-    background-color: #818d39 !important;
-    border-color: #818d39 !important;
+    background-color: #1DB954 !important;
+    border-color: #1DB954 !important;
+}
+
+.bg-primary {
+    background-color: #1DB954 !important;
 }

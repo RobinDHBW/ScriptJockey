@@ -144,7 +144,7 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
                     djInTheHouse = true;
                     clearInterval(timerId);
                     timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
-                    response.clearCookie("spotify_auth_state");
+                    // response.clearCookie("spotify_auth_state");
                     spotifyAPI.callback(code);
                     itsCallbackTime = true;
                     response.redirect("/#");
