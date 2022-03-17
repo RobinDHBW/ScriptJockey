@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import { Spotify } from "./spotify/spotify-app";
 import { GeniusApi } from './genius/genius-app';
 import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
+import events from "events";
 
 
 (async function () {
@@ -24,6 +25,9 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
         const io = new Server(server);
         const gApiAccess = new GeniusApi();
         let spotifyAPI: Spotify;
+        const eventEmitter = new events.EventEmitter();
+
+
 
         const swaggerUi: SwaggerOptions = require('swagger-ui-express');
         const swaggerDocument: JSON = require('../src/openapi.json');
@@ -282,9 +286,25 @@ import { SwaggerOptions, SwaggerUiOptions } from "swagger-ui-express";
             }
         });
 
+        eventEmitter.on("update_playlist",async (data) => {
+            try {
+                io.emit("update_playlist", data);
+            } catch (error) {
+                console.error(error);
+            }
+        })
+
+        eventEmitter.on("update_current_song",async (data) => {
+            try {
+                io.emit("update_current_song", data);
+            } catch (error) {
+                console.error(error);
+            }
+        })        
+
         server.listen({ port: process.env.SERVERPORT, host: process.env.SERVERIP }, async function () {
             try {
-                spotifyAPI = new Spotify(JSON.stringify(server.address()));
+                spotifyAPI = new Spotify(JSON.stringify(server.address()), eventEmitter);
                 console.log(`started && running @ port ${process.env.SERVERPORT}`);
 
             } catch (e) { console.error(e) }

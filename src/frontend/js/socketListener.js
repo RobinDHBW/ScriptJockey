@@ -15,6 +15,10 @@ class SocketIOListener {
             this.#mainController.buildTable(data);
         })
 
+        this.#socket.on("update_current_song", (data) => {
+            this.#mainController.buildJumbotron(data);
+        })
+
         this.#socket.on("spotify_auth_finished_successful", (data) => {
             this.#router.getBackroom();
             if ($("#fetchAlert")) {

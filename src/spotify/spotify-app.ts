@@ -1,5 +1,4 @@
 import axios from "axios";
-import open from 'open';
 
 export class Spotify {
     client_id: string;
@@ -15,9 +14,10 @@ export class Spotify {
     lastSongAdded: any;
     duration_ms: number;
     progress_ms: number;
+    eventEmitter: any;
 
 
-    constructor(address: string) {
+    constructor(address: string, eventEmitter: any) {
         const addressJSON = JSON.parse(address);
         this.client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
         this.client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
@@ -26,6 +26,8 @@ export class Spotify {
         this.currentlyPlaying;
         this.songWithMostVotes;
         this.stateKey = "spotify_auth_state";
+        this.eventEmitter = eventEmitter;
+
     }
 
     getAccessToken = function () {
@@ -270,6 +272,7 @@ export class Spotify {
                 }
             }
             this.startVoting();
+            this.eventEmitter.emit("update_current_song", this.currentlyPlaying);
             return this.currentlyPlaying;
         }
         else {
@@ -410,14 +413,15 @@ export class Spotify {
             const track = this.playlistContent.find(item => item.id === this.songWithMostVotes.id);
             this.playlistContent.splice(this.playlistContent.indexOf(track), 1);
             this.songWithMostVotes = this.playlistContent[0];
+            this.eventEmitter.emit("update_playlist", this.playlistContent)
+
             setTimeout(() => {
                 this.getPlayer();
             }, (this.duration_ms - this.progress_ms) + 500);
         } else {
             setTimeout(() => {
                 this.getPlayer();
-            }
-                , 8000);
+            }, parseInt(process.env.POLL_TIME));
         }
     }
 }
