@@ -196,12 +196,14 @@ export class Spotify {
                     item.track.artists.forEach((artist: any) =>
                         artists.push(artist.name)
                     );
+
                     _this.playlistContent.push({
                         track: item.track.name,
                         id: item.track.id,
                         artist: artists,
                         album: item.track.album.name,
                         duration: _this.calculateDuration(item.track.duration_ms),
+                        images: item.track.album.images,
                         votes: 0
                     });
                 }
