@@ -32,7 +32,7 @@ class SocketIOListener {
         })
 
         this.#socket.on("dj_in_the_house", async (data) => {
-            if (data && !(await this.#utils.getCookieValue("spotify_auth_state"))) {
+            if (data && !(await this.#utils.getCookieValue("dj_in_the_House"))) {
                 $("#im-the-dj").attr('style', 'display: none !important');
             }
         })

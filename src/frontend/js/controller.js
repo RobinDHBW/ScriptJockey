@@ -2,9 +2,11 @@
 
 class MainController {
     #router;
+    #utils;
 
-    constructor(router) {
-        this.#router = router
+    constructor(router, utils) {
+        this.#router = router;
+        this.#utils = utils;
     }
 
     async errorMessage() {
@@ -73,7 +75,7 @@ class MainController {
     }
 
     async initPlaylist(force) {
-        try {
+        try {                        
             await this.#router.getStart();
             if ($("#fetchAlert")) {
                 $("#fetchAlert").parent().find("#fetchAlert").remove();
