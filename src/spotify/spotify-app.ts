@@ -15,6 +15,7 @@ export class Spotify {
     duration_ms: number;
     progress_ms: number;
     eventEmitter: any;
+    timer: any;
 
 
     constructor(address: string, eventEmitter: any) {
@@ -27,7 +28,7 @@ export class Spotify {
         this.songWithMostVotes;
         this.stateKey = "spotify_auth_state";
         this.eventEmitter = eventEmitter;
-
+        this.timer = null;
     }
 
     getAccessToken = function () {
@@ -407,21 +408,36 @@ export class Spotify {
         if (this.duration_ms - this.progress_ms < 10000 && this.lastSongAdded.id === this.currentlyPlaying.track_id) {
             await this.addTracktoQueue(this.songWithMostVotes.id);
             this.lastSongAdded = this.songWithMostVotes;
-            this.playlistContent.forEach(item => {
+            /*this.playlistContent.forEach(item => {
                 item.votes = 0;
-            });
+            });*/
             const track = this.playlistContent.find(item => item.id === this.songWithMostVotes.id);
             this.playlistContent.splice(this.playlistContent.indexOf(track), 1);
             this.songWithMostVotes = this.playlistContent[0];
+            this.playlistContent.forEach(item => {
+                if (item.votes > this.songWithMostVotes.votes) {
+                    this.songWithMostVotes = item;
+                }
+            });
             this.eventEmitter.emit("update_playlist", this.playlistContent)
 
-            setTimeout(() => {
-                this.getPlayer();
-            }, (this.duration_ms - this.progress_ms) + 500);
+            if (!this.timer) {
+                this.timer = setTimeout(() => {
+                    this.getPlayer();
+                    this.timer = null;
+                }, (this.duration_ms - this.progress_ms) + 500);
+            }
         } else {
-            setTimeout(() => {
-                this.getPlayer();
-            }, parseInt(process.env.POLL_TIME));
+            if (!this.timer) {
+                this.timer = setTimeout(() => {
+                    this.getPlayer();
+                    this.timer = null;
+                }, parseInt(process.env.POLL_TIME));
+            }
         }
+    }
+
+    async resetLastSongAdded() {
+        this.lastSongAdded = null;
     }
 }

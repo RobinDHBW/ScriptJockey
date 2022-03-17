@@ -98,9 +98,11 @@ import events from "events";
             try {
                 if (!djInTheHouse) throw new Error("Not authenticated yet!");
                 const playList = await spotifyAPI.getPlaylist();
-                if (!Array.isArray(playList) || request.query.force){
-                const currentTrack: any = await spotifyAPI.getPlayer();
-                return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));}
+                if (!Array.isArray(playList) || request.query.force) {
+                    await spotifyAPI.resetLastSongAdded();
+                    const currentTrack: any = await spotifyAPI.getPlayer();
+                    return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));
+                }
                 return response.send(playList);
             } catch (e) {
                 if (e.message === "Not authenticated yet!") {
@@ -278,7 +280,7 @@ import events from "events";
         app.use(express.static(path.join(__dirname + "/frontend/")));
         io.on("connection", async (socket) => {
             // console.log("Socket connected");       
-            io.emit("dj_in_the_house", djInTheHouse);     
+            io.emit("dj_in_the_house", djInTheHouse);
             if (itsCallbackTime) {
                 itsCallbackTime = false;
                 await new Promise(resolve => setTimeout(resolve, 300)); //Brechstange - Unschön, aber funktioniert^^
@@ -286,7 +288,7 @@ import events from "events";
             }
         });
 
-        eventEmitter.on("update_playlist",async (data) => {
+        eventEmitter.on("update_playlist", async (data) => {
             try {
                 io.emit("update_playlist", data);
             } catch (error) {
@@ -294,13 +296,13 @@ import events from "events";
             }
         })
 
-        eventEmitter.on("update_current_song",async (data) => {
+        eventEmitter.on("update_current_song", async (data) => {
             try {
                 io.emit("update_current_song", data);
             } catch (error) {
                 console.error(error);
             }
-        })        
+        })
 
         server.listen({ port: process.env.SERVERPORT, host: process.env.SERVERIP }, async function () {
             try {
