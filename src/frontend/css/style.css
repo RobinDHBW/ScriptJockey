@@ -1,5 +1,5 @@
 body {
-    font-family: sans-serif;
+    font-family: Arial, Helvetica, sans-serif,sans-serif;
     font-size: 18px;
     color: #191414;
     font-weight: 200;
@@ -111,4 +111,14 @@ a {
 
 #currently-playing-container{
     display: none !important;
+}
+
+.song-title{
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.song-meta {
+    font-weight: lighter;
+    font-size: small;
 }

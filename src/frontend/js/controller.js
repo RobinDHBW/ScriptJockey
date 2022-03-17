@@ -91,13 +91,14 @@ class MainController {
         try {
             $.get("/player", async (data) => {
                 try {
-                    $("#currently-playing-container").attr('style', 'display: flex !important');
+                    $("#currently-playing-container").attr('style', 'display: block !important');
                     let artist = "";
                     for (const [i, item] of data.artists.entries()) {
                         const gap = i > 0 ? ", " : "";
                         artist += gap + item;
                     }
-                    $("#currently-playing-text").text(`${artist} - ${data.track} | ${data.album}`);
+                    $("#currently-playing-song").text(`${data.track}`);
+                    $("#currently-playing-meta").text(`${artist} | ${data.album}`);                    
                 } catch (e) {
                     console.error(e);
                 }
