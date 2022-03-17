@@ -10,6 +10,12 @@ export class Spotify {
     playlistContent: Array<any>;
     device_id: string;
     stateKey: string;
+    currentlyPlaying: any;
+    songWithMostVotes: any;
+    lastSongAdded: any;
+    duration_ms: number;
+    progress_ms: number;
+
 
     constructor(address: string) {
         const addressJSON = JSON.parse(address);
@@ -17,10 +23,8 @@ export class Spotify {
         this.client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
         this.redirect_uri = "http://" + addressJSON.address + ":" + addressJSON.port + "/callback"; // Your redirect uri
         this.playlistContent = new Array<Object>();
-        //this.redirect;
-        //this.device_id = "736893c70c440b9e727b17ad95cfa8fc8d52e959";
-        //this.device_id = "9bd9d72d9d1fde992f9ff70832230b8a1898f45e";
-        //this.device_id = "14fddc193f451b8dcb01daf0982afd8d4c94bd23";
+        this.currentlyPlaying;
+        this.songWithMostVotes;
         this.stateKey = "spotify_auth_state";
     }
 
@@ -200,6 +204,7 @@ export class Spotify {
                     });
                 }
             }
+            this.songWithMostVotes = _this.playlistContent[0];
             return _this.playlistContent;
         } catch (ex) {
             console.error(ex);
@@ -218,8 +223,8 @@ export class Spotify {
     };
 
     getPlayer = async function () {
+        this.currentlyPlaying = new Object();
         var _this = this;
-        var currentlyPlaying = new Object();
         const artists = new Array<string>();
         var url = "https://api.spotify.com/v1/me/player";
         var options = {
@@ -235,7 +240,7 @@ export class Spotify {
                 artists.push(artist.name)
             );
 
-            currentlyPlaying = {
+            _this.currentlyPlaying = {
                 track: response.data.item.name,
                 track_id: response.data.item.id,
                 device: response.data.device.name,
@@ -247,8 +252,25 @@ export class Spotify {
                 isPlaying: response.data.is_playing,
                 playlist_id: response.data.context.uri.split(":")[2]
             };
+            this.duration_ms = response.data.item.duration_ms;
+            this.progress_ms = response.data.progress_ms;
             this.device_id = response.data.device.id;
-            return currentlyPlaying;
+            /*if (!this.currentlyPlaying.isPlaying && this.progress_ms < 10000) {
+                this.getPlayer();
+                return this.currentlyPlaying;
+            }*/
+            if (!this.lastSongAdded) {
+                this.lastSongAdded = {
+                    track: this.currentlyPlaying.track,
+                    id: this.currentlyPlaying.track_id,
+                    artist: this.currentlyPlaying.artists,
+                    album: this.currentlyPlaying.album,
+                    duration: this.currentlyPlaying.duration,
+                    votes: 0
+                }
+            }
+            this.startVoting();
+            return this.currentlyPlaying;
         }
         else {
             throw {
@@ -352,26 +374,50 @@ export class Spotify {
         return response.data;
     };
 
-    createTab = async function () {
-        await open('https://open.spotify.com/');
-    }
-
     async upvote(track_id: string) {
         try {
             const track = this.playlistContent.find(item => item.id === track_id);
             track.votes++;
+
+            this.songWithMostVotes = track;
+            this.playlistContent.forEach(item => {
+                if (item.votes > this.songWithMostVotes.votes) {
+                    this.songWithMostVotes = item;
+                }
+            });
         } catch (e) {
             console.error(e);
         }
     }
 
-    async getPlaylist(){
+    async getPlaylist() {
         try {
-            if(!Array.isArray(this.playlistContent) || this.playlistContent.length === 0) throw new Error("Playlist empty - fetch first!");
+            if (!Array.isArray(this.playlistContent) || this.playlistContent.length === 0) throw new Error("Playlist empty - fetch first!");
             return this.playlistContent;
         } catch (error) {
             console.error(error);
             return null;
+        }
+    }
+
+    async startVoting() {
+        if (this.duration_ms - this.progress_ms < 10000 && this.lastSongAdded.id === this.currentlyPlaying.track_id) {
+            await this.addTracktoQueue(this.songWithMostVotes.id);
+            this.lastSongAdded = this.songWithMostVotes;
+            this.playlistContent.forEach(item => {
+                item.votes = 0;
+            });
+            const track = this.playlistContent.find(item => item.id === this.songWithMostVotes.id);
+            this.playlistContent.splice(this.playlistContent.indexOf(track), 1);
+            this.songWithMostVotes = this.playlistContent[0];
+            setTimeout(() => {
+                this.getPlayer();
+            }, (this.duration_ms - this.progress_ms) + 500);
+        } else {
+            setTimeout(() => {
+                this.getPlayer();
+            }
+                , 8000);
         }
     }
 }
