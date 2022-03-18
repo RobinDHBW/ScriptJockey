@@ -130,3 +130,7 @@ a {
 .next-song{
     background-color: #1DB954;
 }
+
+.container-song-info {
+    max-width: 480px !important;
+}

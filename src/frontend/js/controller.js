@@ -73,6 +73,7 @@ class MainController {
                 const gap = i > 0 ? ", " : "";
                 artist += gap + item;
             }
+            $("#currently-playing-image").attr('src', data.images[2].url)
             $("#currently-playing-song").text(`${data.track}`);
             $("#currently-playing-meta").text(`${artist} | ${data.album}`);
         } catch (error) {

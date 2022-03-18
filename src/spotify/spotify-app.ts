@@ -243,7 +243,8 @@ export class Spotify {
                 duration: _this.calculateDuration(response.data.item.duration_ms),
                 progress: _this.calculateDuration(response.data.progress_ms),
                 isPlaying: response.data.is_playing,
-                playlist_id: response.data.context.uri.split(":")[2]
+                playlist_id: response.data.context.uri.split(":")[2],
+                images: response.data.item.album.images
             };
             this.duration_ms = response.data.item.duration_ms;
             this.progress_ms = response.data.progress_ms;
