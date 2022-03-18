@@ -409,6 +409,7 @@ export class Spotify {
                 this.timer = setTimeout(() => {
                     this.getPlayer();
                     this.timer = null;
+                    this.resetLastSongAdded();
                 }, parseInt(process.env.POLL_TIME));
             }
         }
