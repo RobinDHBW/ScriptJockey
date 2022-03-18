@@ -382,9 +382,6 @@ export class Spotify {
     }
 
     async startVoting() {
-        console.log(this.lastSongAdded.track)
-        console.log(this.currentlyPlaying.track)
-        console.log()
         if (this.duration_ms - this.progress_ms < 10000 && this.lastSongAdded.id === this.currentlyPlaying.track_id) {
             await this.addTracktoQueue(this.songWithMostVotes.id);
             this.lastSongAdded = this.songWithMostVotes;
