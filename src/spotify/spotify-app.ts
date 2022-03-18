@@ -31,7 +31,7 @@ export class Spotify {
         this.timer = null;
     }
 
-    getAccessToken = function () {
+    getAccessToken() {
         return this.access_token;
     }
 
@@ -40,7 +40,7 @@ export class Spotify {
      * @param  {number} length The length of the string
      * @return {string} The generated string
      */
-    generateRandomString = function (length: number) {
+    generateRandomString(length: number) {
         var text = "";
         var possible =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -53,18 +53,7 @@ export class Spotify {
         return text;
     };
 
-    /*var app = express();
-    app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-	
-    app.use(express.static(__dirname + '/public'))
-        .use(cors())
-        .use(cookieParser());*/
-
-    login = function (state: string) {
-        //var state = this.generateRandomString(16);
-        //res.cookie(stateKey, state);
-
-        // your application requests authorization
+    login(state: string) {
         var scope =
             "user-read-private user-read-email playlist-read-private user-read-playback-state user-modify-playback-state streaming";
 
@@ -78,7 +67,7 @@ export class Spotify {
         return url;
     };
 
-    callback = async function (code: any) {
+    async callback(code: any) {
         // your application requests refresh and access tokens
         // after checking the state parameter
         const url = process.env.SPOTIFY_TOKEN_URL;
@@ -106,7 +95,7 @@ export class Spotify {
             authOptions
         );
 
-        //console.log(response.data);
+        // console.log(response.data);
 
         if (!response.data.error && response.status === 200) {
             this.access_token = response.data.access_token;
@@ -135,7 +124,7 @@ export class Spotify {
         return redirectUrl;
     };
 
-    refreshToken = async function () {
+    async refreshToken() {
         //this.refresh_token = refresh_token || this.refresh_token;
         var url = "https://accounts.spotify.com/api/token";
         var authOptions = {
@@ -162,11 +151,10 @@ export class Spotify {
 
         if (!response.data.error && response.status === 200) {
             this.access_token = response.data.access_token;
-            //console.log(this.access_token);
         }
     };
 
-    fetchPlaylist = async function (id: string) {
+    async fetchPlaylist(id: string) {
         try {
             this.playlistContent = new Array<Object>();
             var _this = this;
@@ -217,7 +205,7 @@ export class Spotify {
         }
     };
 
-    calculateDuration = function (duration: number) {
+    calculateDuration(duration: number) {
         return (
             Math.trunc(duration / 60000) +
             ":" +
@@ -227,7 +215,7 @@ export class Spotify {
         );
     };
 
-    getPlayer = async function () {
+    async getPlayer() {
         this.currentlyPlaying = new Object();
         var _this = this;
         const artists = new Array<string>();
@@ -260,10 +248,6 @@ export class Spotify {
             this.duration_ms = response.data.item.duration_ms;
             this.progress_ms = response.data.progress_ms;
             this.device_id = response.data.device.id;
-            /*if (!this.currentlyPlaying.isPlaying && this.progress_ms < 10000) {
-                this.getPlayer();
-                return this.currentlyPlaying;
-            }*/
             if (!this.lastSongAdded) {
                 this.lastSongAdded = {
                     track: this.currentlyPlaying.track,
@@ -279,20 +263,11 @@ export class Spotify {
             return this.currentlyPlaying;
         }
         else {
-            throw {
-                response: {
-                    data: {
-                        error: {
-                            status: 404,
-                            message: "no active device, use /switchPlayer/{device_id} to switch your Player"
-                        }
-                    }
-                }
-            }
+            throw new Error("no active device, please visit the Spotify Web Player and start playing a playlist");
         }
     };
 
-    pausePlayer = async function () {
+    async pausePlayer() {
         var url =
             "https://api.spotify.com/v1/me/player/pause?device_id=" +
             this.device_id;
@@ -309,7 +284,7 @@ export class Spotify {
         };
     };
 
-    playPlayer = async function () {
+    async playPlayer() {
         var url =
             "https://api.spotify.com/v1/me/player/play?device_id=" +
             this.device_id;
@@ -326,7 +301,7 @@ export class Spotify {
         };
     };
 
-    transferPlayback = async function (id: string) {
+    async transferPlayback(id: string) {
         this.device_id = id;
         var url = "https://api.spotify.com/v1/me/player";
         var options = {
@@ -348,7 +323,7 @@ export class Spotify {
         };
     }
 
-    addTracktoQueue = async function (id: string) {
+    async addTracktoQueue(id: string) {
         var url =
             "https://api.spotify.com/v1/me/player/queue?uri=spotify:track:" +
             id +
@@ -367,7 +342,7 @@ export class Spotify {
         };
     };
 
-    getDevices = async function () {
+    async getDevices() {
         var url = "https://api.spotify.com/v1/me/player/devices";
         var options = {
             url: url,
