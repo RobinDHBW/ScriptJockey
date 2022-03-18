@@ -1,4 +1,5 @@
 import axios from "axios";
+import e from "express";
 
 export class Spotify {
     client_id: string;
@@ -41,116 +42,129 @@ export class Spotify {
      * @return {string} The generated string
      */
     generateRandomString(length: number) {
-        var text = "";
-        var possible =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        try {
+            var text = "";
+            var possible =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (var i = 0; i < length; i++) {
-            text += possible.charAt(
-                Math.floor(Math.random() * possible.length)
-            );
+            for (var i = 0; i < length; i++) {
+                text += possible.charAt(
+                    Math.floor(Math.random() * possible.length)
+                );
+            }
+            return text;
+        } catch (error) {
+            console.error(error);
         }
-        return text;
     };
 
     login(state: string) {
-        var scope =
-            "user-read-private user-read-email playlist-read-private user-read-playback-state user-modify-playback-state streaming";
+        try {
+            var scope =
+                "user-read-private user-read-email playlist-read-private user-read-playback-state user-modify-playback-state streaming";
 
-        var url = new URLSearchParams({
-            response_type: "code",
-            client_id: this.client_id,
-            scope: scope,
-            redirect_uri: this.redirect_uri,
-            state: state,
-        });
-        return url;
+            var url = new URLSearchParams({
+                response_type: "code",
+                client_id: this.client_id,
+                scope: scope,
+                redirect_uri: this.redirect_uri,
+                state: state,
+            });
+            return url;
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     async callback(code: any) {
-        // your application requests refresh and access tokens
-        // after checking the state parameter
-        const url = process.env.SPOTIFY_TOKEN_URL;
-        var authOptions = {
-            url,
-            headers: {
-                Authorization:
-                    "Basic " +
-                    Buffer.from(
-                        this.client_id + ":" + this.client_secret
-                    ).toString("base64"),
-            },
-            json: true,
-        };
-
-        var body = new URLSearchParams({
-            code: code,
-            redirect_uri: this.redirect_uri,
-            grant_type: "authorization_code",
-        });
-
-        const response = await axios.post(
-            url,
-            body.toString(),
-            authOptions
-        );
-
-        // console.log(response.data);
-
-        if (!response.data.error && response.status === 200) {
-            this.access_token = response.data.access_token;
-            this.refresh_token = response.data.refresh_token;
-
-            var options = {
-                url: "https://api.spotify.com/v1/me",
-                headers: { Authorization: "Bearer " + this.access_token },
+        try {
+            // your application requests refresh and access tokens
+            // after checking the state parameter
+            const url = process.env.SPOTIFY_TOKEN_URL;
+            var authOptions = {
+                url,
+                headers: {
+                    Authorization:
+                        "Basic " +
+                        Buffer.from(
+                            this.client_id + ":" + this.client_secret
+                        ).toString("base64"),
+                },
                 json: true,
             };
-            // use the access token to access the Spotify Web API
-            const response2 = await axios.get(
-                "https://api.spotify.com/v1/me",
-                options
-            );
-            // console.log(response2.data);
 
-            // we can also pass the token to the browser to make requests from there
-            var redirectUrl = new URLSearchParams({
-                access_token: this.access_token,
-                refresh_token: this.refresh_token,
+            var body = new URLSearchParams({
+                code: code,
+                redirect_uri: this.redirect_uri,
+                grant_type: "authorization_code",
             });
-        } else {
-            var redirectUrl = new URLSearchParams({ error: "invalid_token" });
+
+            const response = await axios.post(
+                url,
+                body.toString(),
+                authOptions
+            );
+
+
+            if (!response.data.error && response.status === 200) {
+                this.access_token = response.data.access_token;
+                this.refresh_token = response.data.refresh_token;
+
+                var options = {
+                    url: "https://api.spotify.com/v1/me",
+                    headers: { Authorization: "Bearer " + this.access_token },
+                    json: true,
+                };
+                // use the access token to access the Spotify Web API
+                const response2 = await axios.get(
+                    "https://api.spotify.com/v1/me",
+                    options
+                );
+
+                // we can also pass the token to the browser to make requests from there
+                var redirectUrl = new URLSearchParams({
+                    access_token: this.access_token,
+                    refresh_token: this.refresh_token,
+                });
+            } else {
+                var redirectUrl = new URLSearchParams({ error: "invalid_token" });
+            }
+            return redirectUrl;
+        } catch (error) {
+            console.error(error);
         }
-        return redirectUrl;
     };
 
     async refreshToken() {
-        //this.refresh_token = refresh_token || this.refresh_token;
-        var url = "https://accounts.spotify.com/api/token";
-        var authOptions = {
-            url: url,
-            headers: {
-                Authorization:
-                    "Basic " +
-                    Buffer.from(
-                        this.client_id + ":" + this.client_secret
-                    ).toString("base64"),
-            },
-            json: true,
-        };
-        var body = new URLSearchParams({
-            grant_type: "refresh_token",
-            refresh_token: this.refresh_token,
-        });
+        try {
+            var url = "https://accounts.spotify.com/api/token";
+            var authOptions = {
+                url: url,
+                headers: {
+                    Authorization:
+                        "Basic " +
+                        Buffer.from(
+                            this.client_id + ":" + this.client_secret
+                        ).toString("base64"),
+                },
+                json: true,
+            };
+            var body = new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: this.refresh_token,
+            });
 
-        const response = await axios.post(
-            url,
-            body.toString(),
-            authOptions
-        );
+            const response = await axios.post(
+                url,
+                body.toString(),
+                authOptions
+            );
 
-        if (!response.data.error && response.status === 200) {
-            this.access_token = response.data.access_token;
+            if (!response.data.error && response.status === 200) {
+                this.access_token = response.data.access_token;
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -199,8 +213,8 @@ export class Spotify {
             }
             this.songWithMostVotes = _this.playlistContent[0];
             return _this.playlistContent;
-        } catch (ex) {
-            console.error(ex);
+        } catch (error) {
+            console.error(error);
             return null;
         }
     };
@@ -216,143 +230,168 @@ export class Spotify {
     };
 
     async getPlayer() {
-        this.currentlyPlaying = new Object();
-        var _this = this;
-        const artists = new Array<string>();
-        var url = "https://api.spotify.com/v1/me/player";
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-
-        const response = await axios.get(url, options);
-
-        if (response.data) {
-            response.data.item.artists.forEach((artist: any) =>
-                artists.push(artist.name)
-            );
-
-            _this.currentlyPlaying = {
-                track: response.data.item.name,
-                track_id: response.data.item.id,
-                device: response.data.device.name,
-                device_id: response.data.device.id,
-                artists: artists,
-                album: response.data.item.album.name,
-                duration: _this.calculateDuration(response.data.item.duration_ms),
-                progress: _this.calculateDuration(response.data.progress_ms),
-                isPlaying: response.data.is_playing,
-                playlist_id: response.data.context.uri.split(":")[2]
+        try {
+            this.currentlyPlaying = new Object();
+            var _this = this;
+            const artists = new Array<string>();
+            var url = "https://api.spotify.com/v1/me/player";
+            var options = {
+                url: url,
+                headers: { Authorization: "Bearer " + this.access_token },
+                json: true,
             };
-            this.duration_ms = response.data.item.duration_ms;
-            this.progress_ms = response.data.progress_ms;
-            this.device_id = response.data.device.id;
-            if (!this.lastSongAdded) {
-                this.lastSongAdded = {
-                    track: this.currentlyPlaying.track,
-                    id: this.currentlyPlaying.track_id,
-                    artist: this.currentlyPlaying.artists,
-                    album: this.currentlyPlaying.album,
-                    duration: this.currentlyPlaying.duration,
-                    votes: 0
+
+            const response = await axios.get(url, options);
+
+            if (response.data) {
+                response.data.item.artists.forEach((artist: any) =>
+                    artists.push(artist.name)
+                );
+
+                _this.currentlyPlaying = {
+                    track: response.data.item.name,
+                    track_id: response.data.item.id,
+                    device: response.data.device.name,
+                    device_id: response.data.device.id,
+                    artists: artists,
+                    album: response.data.item.album.name,
+                    duration: _this.calculateDuration(response.data.item.duration_ms),
+                    progress: _this.calculateDuration(response.data.progress_ms),
+                    isPlaying: response.data.is_playing,
+                    playlist_id: response.data.context.uri.split(":")[2]
+                };
+                this.duration_ms = response.data.item.duration_ms;
+                this.progress_ms = response.data.progress_ms;
+                this.device_id = response.data.device.id;
+                if (!this.lastSongAdded) {
+                    this.lastSongAdded = {
+                        track: this.currentlyPlaying.track,
+                        id: this.currentlyPlaying.track_id,
+                        artist: this.currentlyPlaying.artists,
+                        album: this.currentlyPlaying.album,
+                        duration: this.currentlyPlaying.duration,
+                        votes: 0
+                    }
                 }
+                this.startVoting();
+                this.eventEmitter.emit("update_current_song", this.currentlyPlaying);
+                return this.currentlyPlaying;
             }
-            this.startVoting();
-            this.eventEmitter.emit("update_current_song", this.currentlyPlaying);
-            return this.currentlyPlaying;
-        }
-        else {
-            throw new Error("no active device, please visit the Spotify Web Player and start playing a playlist");
+            else {
+                throw new Error("no active device, please visit the Spotify Web Player and start playing a playlist");
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 
     async pausePlayer() {
-        var url =
-            "https://api.spotify.com/v1/me/player/pause?device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
+        try {
+            var url =
+                "https://api.spotify.com/v1/me/player/pause?device_id=" +
+                this.device_id;
+            var options = {
+                url: url,
+                headers: { Authorization: "Bearer " + this.access_token },
+                json: true,
+            };
 
-        const response = await axios.put(url, null, options);
+            const response = await axios.put(url, null, options);
 
-        return {
-            message: "successfully paused",
-        };
+            return {
+                message: "successfully paused",
+            };
+
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     async playPlayer() {
-        var url =
-            "https://api.spotify.com/v1/me/player/play?device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
+        try {
+            var url =
+                "https://api.spotify.com/v1/me/player/play?device_id=" +
+                this.device_id;
+            var options = {
+                url: url,
+                headers: { Authorization: "Bearer " + this.access_token },
+                json: true,
+            };
 
-        const response = await axios.put(url, null, options);
+            const response = await axios.put(url, null, options);
 
-        return {
-            message: "successfully played"
-        };
+            return {
+                message: "successfully played"
+            };
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     async transferPlayback(id: string) {
-        this.device_id = id;
-        var url = "https://api.spotify.com/v1/me/player";
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
-        var body = {
-            "device_ids": [
-                id
-            ],
-            play: false
+        try {
+            this.device_id = id;
+            var url = "https://api.spotify.com/v1/me/player";
+            var options = {
+                url: url,
+                headers: { Authorization: "Bearer " + this.access_token },
+                json: true,
+            };
+            var body = {
+                "device_ids": [
+                    id
+                ],
+                play: false
+            }
+
+            const response = await axios.put(url, body, options);
+
+            return {
+                message: "playback switched"
+            };
+        } catch (error) {
+            console.error(error);
         }
-
-        const response = await axios.put(url, body, options);
-
-        return {
-            message: "playback switched"
-        };
     }
 
     async addTracktoQueue(id: string) {
-        var url =
-            "https://api.spotify.com/v1/me/player/queue?uri=spotify:track:" +
-            id +
-            "&device_id=" +
-            this.device_id;
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
+        try {
+            var url =
+                "https://api.spotify.com/v1/me/player/queue?uri=spotify:track:" +
+                id +
+                "&device_id=" +
+                this.device_id;
+            var options = {
+                url: url,
+                headers: { Authorization: "Bearer " + this.access_token },
+                json: true,
+            };
 
-        const response = await axios.post(url, null, options);
+            const response = await axios.post(url, null, options);
 
-        return {
-            message: "successfully added to queue",
-        };
+            return {
+                message: "successfully added to queue",
+            };
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     async getDevices() {
-        var url = "https://api.spotify.com/v1/me/player/devices";
-        var options = {
-            url: url,
-            headers: { Authorization: "Bearer " + this.access_token },
-            json: true,
-        };
+        try {
+            var url = "https://api.spotify.com/v1/me/player/devices";
+            var options = {
+                url: url,
+                headers: { Authorization: "Bearer " + this.access_token },
+                json: true,
+            };
 
-        const response = await axios.get(url, options);
-        //this.device_id = response.data.device.id;
-        return response.data;
+            const response = await axios.get(url, options);
+            //this.device_id = response.data.device.id;
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     async upvote(track_id: string) {
@@ -366,8 +405,8 @@ export class Spotify {
                     this.songWithMostVotes = item;
                 }
             });
-        } catch (e) {
-            console.error(e);
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -382,35 +421,39 @@ export class Spotify {
     }
 
     async startVoting() {
-        if (this.duration_ms - this.progress_ms < 10000 && this.lastSongAdded.id === this.currentlyPlaying.track_id) {
-            await this.addTracktoQueue(this.songWithMostVotes.id);
-            this.lastSongAdded = this.songWithMostVotes;
-            /*this.playlistContent.forEach(item => {
-                item.votes = 0;
-            });*/
-            const track = this.playlistContent.find(item => item.id === this.songWithMostVotes.id);
-            this.playlistContent.splice(this.playlistContent.indexOf(track), 1);
-            this.songWithMostVotes = this.playlistContent[0];
-            this.playlistContent.forEach(item => {
-                if (item.votes > this.songWithMostVotes.votes) {
-                    this.songWithMostVotes = item;
-                }
-            });
-            this.eventEmitter.emit("update_playlist", this.playlistContent)
+        try {
+            if (this.duration_ms - this.progress_ms < 10000 && this.lastSongAdded.id === this.currentlyPlaying.track_id) {
+                await this.addTracktoQueue(this.songWithMostVotes.id);
+                this.lastSongAdded = this.songWithMostVotes;
+                /*this.playlistContent.forEach(item => {
+                    item.votes = 0;
+                });*/
+                const track = this.playlistContent.find(item => item.id === this.songWithMostVotes.id);
+                this.playlistContent.splice(this.playlistContent.indexOf(track), 1);
+                this.songWithMostVotes = this.playlistContent[0];
+                this.playlistContent.forEach(item => {
+                    if (item.votes > this.songWithMostVotes.votes) {
+                        this.songWithMostVotes = item;
+                    }
+                });
+                this.eventEmitter.emit("update_playlist", this.playlistContent)
 
-            if (!this.timer) {
-                this.timer = setTimeout(() => {
-                    this.getPlayer();
-                    this.timer = null;
-                }, (this.duration_ms - this.progress_ms) + 500);
+                if (!this.timer) {
+                    this.timer = setTimeout(() => {
+                        this.getPlayer();
+                        this.timer = null;
+                    }, (this.duration_ms - this.progress_ms) + 500);
+                }
+            } else {
+                if (!this.timer) {
+                    this.timer = setTimeout(() => {
+                        this.getPlayer();
+                        this.timer = null;
+                    }, parseInt(process.env.POLL_TIME));
+                }
             }
-        } else {
-            if (!this.timer) {
-                this.timer = setTimeout(() => {
-                    this.getPlayer();
-                    this.timer = null;
-                }, parseInt(process.env.POLL_TIME));
-            }
+        } catch (error) {
+            console.error(error);
         }
     }
 

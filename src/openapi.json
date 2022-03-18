@@ -28,6 +28,106 @@
         }
     ],
     "paths": {
+        "/fe/start": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "title",
+                        "description": "title of the song",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Song lyrics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Lyrics"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lyrics not found"
+                    }
+                }
+            }
+        },
+        "/fe/backroom-poker": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "title",
+                        "description": "title of the song",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Song lyrics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Lyrics"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lyrics not found"
+                    }
+                }
+            }
+        },
+        "/fe/sync": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "description": "@try it out doesn't work in Swagger-UI",
+                "responses": {
+                    "200": {
+                        "description": "Song lyrics"
+                    },
+                    "501": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/fe/upvote": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "description": "@try it out doesn't work in Swagger-UI",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "501": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/lyrics/{title}/{artist}": {
             "get": {
                 "tags": [
@@ -71,12 +171,44 @@
                 }
             }
         },
+        "/login": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "requests user authorization to access data @try it out doesn't work in Swagger-UI",
+                "responses": {
+                    "200": {
+                        "description": "redirects to Spotify Accounts Service, login prompt"
+                    },
+                    "501": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/callback": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "requests access and refresh token, is called after successful login @try it out doesn't work in Swagger-UI",
+                "responses": {
+                    "200": {
+                        "description": "sets access and refresh token"
+                    },
+                    "501": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/playlists/{playlist_id}": {
             "get": {
                 "tags": [
                     "Spotify Web API"
                 ],
-                "description": "get content of playlist by id e.g. 7LBhiiutTkDBGUfBzVPaoU",
+                "description": "get content of playlist by id e.g. 1S2kiBvqOZHc4O1bWuVnro",
                 "parameters": [
                     {
                         "in": "path",
@@ -102,43 +234,8 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
-                    },
-                    "404": {
-                        "description": "Service not found"
-                    }
-                }
-            }
-        },
-        "/login": {
-            "get": {
-                "tags": [
-                    "Spotify Web API"
-                ],
-                "description": "requests user authorization to access data @try it out doesn't work in Swagger-UI",
-                "responses": {
-                    "200": {
-                        "description": "redirects to Spotify Accounts Service, login prompt"
-                    },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
-                    }
-                }
-            }
-        },
-        "/callback": {
-            "get": {
-                "tags": [
-                    "Spotify Web API"
-                ],
-                "description": "requests access and refresh token, is called after successful login @try it out doesn't work in Swagger-UI",
-                "responses": {
-                    "200": {
-                        "description": "sets access and refresh token"
-                    },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -153,14 +250,8 @@
                     "200": {
                         "description": "successfully paused"
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
-                    },
-                    "403": {
-                        "description": "Forbidden, player is already paused"
-                    },
-                    "404": {
-                        "description": "Device not found"
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -175,14 +266,8 @@
                     "200": {
                         "description": "successfully played"
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
-                    },
-                    "403": {
-                        "description": "Forbidden, player is already playing"
-                    },
-                    "404": {
-                        "description": "Device not found"
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -208,8 +293,8 @@
                     "200": {
                         "description": "successfully added to queue"
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -231,10 +316,7 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
-                    },
-                    "404": {
+                    "501": {
                         "description": "no active device found"
                     }
                 }
@@ -260,8 +342,8 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -287,11 +369,8 @@
                     "200": {
                         "description": "playback switched"
                     },
-                    "401": {
-                        "description": "Bad or expired token. This can happen if the user revoked a token or the access token has expired. You should re-authenticate the user."
-                    },
-                    "404": {
-                        "description": "device not found"
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -303,26 +382,6 @@
                 "type": "object",
                 "properties": {
                     "lyrics": {
-                        "type": "string"
-                    }
-                }
-            },
-            "Playlist": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "tracks": {
-                        "type": "integer"
-                    },
-                    "owner": {
                         "type": "string"
                     }
                 }
@@ -362,6 +421,38 @@
                     },
                     "playlist_id": {
                         "type": "string"
+                    }
+                }
+            },
+            "Track": {
+                "type": "object",
+                "properties": {
+                    "track": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "artist": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "album": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "type": "string"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "votes": {
+                        "type": "integer"
                     }
                 }
             },

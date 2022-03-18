@@ -58,20 +58,20 @@ import events from "events";
         app.get('/', async (request: express.Request, response: express.Response) => {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/index.html"));
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
                 response.status(501);
-                response.send(e.message);
+                response.send(error.message);
             }
         });
 
         app.get('/fe/start', async (request: express.Request, response: express.Response) => {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/html/start.html"));
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
                 response.status(501);
-                response.send(e.message);
+                response.send(error.message);
             }
         });
 
@@ -88,10 +88,10 @@ import events from "events";
                     response.status(330); //Own set
                     response.send({ access: false });
                 }
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
                 response.status(501);
-                response.send(e.message);
+                response.send(error.message);
             }
         });
 
@@ -105,14 +105,14 @@ import events from "events";
                     return response.send(await spotifyAPI.fetchPlaylist(currentTrack.playlist_id));
                 }
                 return response.send(playList);
-            } catch (e) {
-                if (e.message === "Not authenticated yet!") {
+            } catch (error) {
+                if (error.message === "Not authenticated yet!") {
                     response.status(550);
                 } else {
-                    console.error(e);
+                    console.error(error);
+                    response.status(501);
                 }
-
-                response.send(e.message);
+                response.send(error.message);
             }
         });
 
@@ -129,12 +129,16 @@ import events from "events";
             }
         })
 
-
-
         app.get("/login", function (request, response) {
-            const state = spotifyAPI.generateRandomString(16);
-            response.cookie("spotify_auth_state", state);
-            response.redirect(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString());
+            try {
+                const state = spotifyAPI.generateRandomString(16);
+                response.cookie("spotify_auth_state", state);
+                response.redirect(process.env.SPOTIFY_AUTH_URL + spotifyAPI.login(state).toString());
+            } catch (error) {
+                console.error(error);
+                response.status(501);
+                response.send(error.message);
+            }
         });
 
         app.get("/callback", async function (request, response) {
@@ -169,12 +173,8 @@ import events from "events";
                 response.json(await spotifyAPI.fetchPlaylist(request.params.playlist_id));
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status)
-                response.send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
             }
         });
 
@@ -185,11 +185,6 @@ import events from "events";
                 console.error(error);
                 response.status(501);
                 response.send(error.message);
-                // response.status(error.response.data.error.status).send({
-                //     status: error.response.data.error.status || error.response.status,
-                //     statusText: error.response.statusText,
-                //     message: error.response.data.error.message
-                // });
             }
         });
 
@@ -198,11 +193,8 @@ import events from "events";
                 response.status(200).send(await spotifyAPI.pausePlayer());
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status).send({
-                    status: error.response.data.error.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
             }
         });
 
@@ -211,12 +203,8 @@ import events from "events";
                 response.status(200).send(await spotifyAPI.playPlayer());
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status)
-                response.send({
-                    status: error.response.data.error.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
             }
         });
 
@@ -226,12 +214,8 @@ import events from "events";
                 response.send(await spotifyAPI.transferPlayback(id));
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status)
-                response.send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
             }
         });
 
@@ -241,12 +225,8 @@ import events from "events";
                 response.send(await spotifyAPI.addTracktoQueue(id));
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status)
-                response.send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
             }
         });
 
@@ -255,28 +235,24 @@ import events from "events";
                 response.send(await spotifyAPI.getDevices());
             } catch (error) {
                 console.error(error);
-                response.status(error.response.data.error.status)
-                response.send({
-                    status: error.response.data.error.status || error.response.status,
-                    statusText: error.response.statusText,
-                    message: error.response.data.error.message
-                });
+                response.status(501);
+                response.send(error.message);
             }
         });
 
-
-        app.get('/lyrics/:title/:artist', async function (req, res) {
-
+        app.get('/lyrics/:title/:artist', async function (request, response) {
             try {
-                res.json(await gApiAccess.getLyrics(req));
+                response.json(await gApiAccess.getLyrics(request));
             } catch (error) {
-                console.error(error);
+                /*console.error(error);
                 res.status(404).json({
                     message: error.message,
-                });
+                });*/
+                console.error(error);
+                response.status(501);
+                response.send(error.message);
             }
         });
-
 
         app.use(express.static(path.join(__dirname + "/frontend/")));
         io.on("connection", async (socket) => {
