@@ -8,9 +8,9 @@
     "start": "tsc && node dist/index.js",
     "start-log-external": "tsc && node dist/index.js > log.log 2>&1",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docker:build": "docker build http://10.50.15.50/abgaben_ws/inf20/scriptjockey.git:main",
-    "docker:push": "docker push http://10.50.15.50/abgaben_ws/inf20/scriptjockey.git --all-tags",
-    "docker:run": "npm run docker:build && npm run docker:push"
+    "docker:build": "docker build -t 10.50.15.51:9000/inf20/scriptjockey:latest .",
+    "docker:save": "docker save 10.50.15.51:9000/inf20/scriptjockey --all-tags",
+    "docker:run": "npm run docker:build && npm run docker:save"
   },
   "repository": {
     "type": "git",
