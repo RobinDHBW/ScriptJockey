@@ -4,7 +4,7 @@
   "description": "Let em vote. Enjoy yourself.",
   "main": "dist/index.js",
   "scripts": {
-    "prestart": "copyfiles -u 1 src/frontend/**/* dist",
+    "prestart": "copyfiles -u 1 src/frontend/**/* dist && copyfiles .env* dist",
     "start": "tsc && node dist/index.js",
     "start-log-external": "tsc && node dist/index.js > log.log 2>&1",
     "test": "echo \"Error: no test specified\" && exit 1",

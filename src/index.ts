@@ -3,7 +3,7 @@ import express, { Application } from "express";
 import bodyParser from "body-parser";
 import http from "http";
 import path from "path";
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import { Server } from 'socket.io';
 import cookieParser from "cookie-parser";
 import { Spotify } from "./spotify/spotify-app";
@@ -28,6 +28,7 @@ import events from "events";
         const eventEmitter = new events.EventEmitter();
 
 
+        dotenv.config({ path: path.join(__dirname, (process.env.NODE_ENV ? `./.env.${process.env.NODE_ENV}` : ".env")) })
 
         const swaggerUi: SwaggerOptions = require('swagger-ui-express');
         const swaggerDocument: JSON = require('../src/openapi.json');
