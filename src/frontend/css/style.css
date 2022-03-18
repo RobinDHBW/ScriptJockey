@@ -126,3 +126,7 @@ a {
 .mb-currently-playing{
     margin-bottom: 6em !important;
 }
+
+.next-song{
+    background-color: #1DB954;
+}

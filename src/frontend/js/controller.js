@@ -16,6 +16,7 @@ class MainController {
 
     async buildTable(data) {
         try {
+            let mostvoted = { item: null, index: 0 };
             // console.log(data, status);
             // const id3Array = JSON.parse(data);
             $("#automatedID3Table").empty();
@@ -23,7 +24,11 @@ class MainController {
             if (!Array.isArray(data)) throw new Error("Wrong datatype - Array needed!");
             const tbody = $("#automatedID3Table");
             data.forEach((item, index) => {
-                const tr = $("<tr class='id3table-row'></tr>").appendTo(tbody);
+                if (!mostvoted.item || mostvoted.item.votes < item.votes) {
+                    mostvoted.item = item;
+                    mostvoted.index = index;
+                }
+                const tr = $(`<tr id='tr-${index}' class='id3table-row'></tr>`).appendTo(tbody);
                 $(`<td class="text-center" id='${index}-title'>${item.track}</td>`).appendTo(tr);
                 $(`<td class="text-center" id='${index}-artist'>${item.artist}</td>`).appendTo(tr);
                 $(`<td class="text-center" id='${index}-album'>${item.album}</td>`).appendTo(tr);
@@ -50,8 +55,9 @@ class MainController {
                         //     console.error(e);
                         // }
                     })
-                })
+                })                
             })
+            $(`#tr-${mostvoted.index}`).addClass("next-song");
         } catch (e) {
             console.error(e);
             this.errorMessage();
@@ -75,7 +81,7 @@ class MainController {
     }
 
     async initPlaylist(force) {
-        try {                        
+        try {
             await this.#router.getStart();
             if ($("#fetchAlert")) {
                 $("#fetchAlert").parent().find("#fetchAlert").remove();
