@@ -1,11 +1,12 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "description": "",
+        "title": "scriptjockey",
         "version": "1.0.0",
-        "title": "Jukebox"
+        "description": "Let em vote. Enjoy yourself."
     },
-    "tags": [{
+    "tags": [
+        {
             "name": "Genius",
             "description": "accessing Genius API endpoints",
             "externalDocs": {
@@ -23,12 +24,28 @@
         }
     ],
     "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "ScriptJockey-Frontend"
+                ],
+                "description": "Initial request to load the frontend",
+                "responses": {
+                    "200": {
+                        "description": "index.html"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
         "/fe/start": {
             "get": {
                 "tags": [
-                    "Spotify Web API"
+                    "ScriptJockey-Frontend"
                 ],
-                "description": "load HTML start page",
+                "description": "start.html",
                 "responses": {
                     "200": {
                         "description": "HTML start page"
@@ -42,12 +59,12 @@
         "/fe/backroom-poker": {
             "get": {
                 "tags": [
-                    "Spotify Web API"
+                    "ScriptJockey-Frontend"
                 ],
-                "description": "",
+                "description": "load HTML page for DJ Settings",
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "backroom.html"
                     },
                     "501": {
                         "description": "internal Server Error"
@@ -58,12 +75,12 @@
         "/fe/sync": {
             "get": {
                 "tags": [
-                    "Spotify Web API"
+                    "ScriptJockey-Frontend"
                 ],
-                "description": "",
+                "description": "Sync Scriptjockey middleware with Spotify, fetch the playlist",
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "playListContent:Array"
                     },
                     "501": {
                         "description": "internal Server Error"
@@ -74,12 +91,12 @@
         "/fe/upvote": {
             "post": {
                 "tags": [
-                    "Spotify Web API"
+                    "ScriptJockey-Frontend"
                 ],
-                "description": "@try it out doesn't work in Swagger-UI",
+                "description": "Upvote a song in the loaded playlist",
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "done"
                     },
                     "501": {
                         "description": "internal Server Error"
@@ -93,7 +110,8 @@
                     "Genius"
                 ],
                 "description": "get song lyrics by searching for title and artist",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "query",
                         "name": "title",
                         "description": "title of the song",
@@ -167,15 +185,17 @@
                     "Spotify Web API"
                 ],
                 "description": "get content of playlist by id e.g. 1S2kiBvqOZHc4O1bWuVnro",
-                "parameters": [{
-                    "in": "path",
-                    "name": "playlist_id",
-                    "description": "playlist id",
-                    "required": true,
-                    "schema": {
-                        "type": "string"
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "playlist_id",
+                        "description": "playlist id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
-                }],
+                ],
                 "responses": {
                     "200": {
                         "description": "A playlist",
@@ -236,7 +256,7 @@
                 "description": "add track to queue by id e.g. 64BbK9SFKH2jk86U3dGj2P",
                 "requestBody": {
                     "description": "song to add, id is required",
-                    "required": true, 
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
@@ -312,7 +332,7 @@
                 "description": "transfer playback to the given device id",
                 "requestBody": {
                     "description": "device transfer, id is required",
-                    "required": true, 
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
