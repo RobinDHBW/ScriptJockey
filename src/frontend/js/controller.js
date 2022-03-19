@@ -13,12 +13,15 @@ class MainController {
     }
 
     async errorMessage() {
+        $("#automatedID3Table").empty();
         $("#spinning-sheep-gatter").attr('style', 'display: none !important');
-        $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>Error</strong> | Fetch data from server failed!</div>`))
+        $("#currently-playing-container").attr('style', 'display: none; !important');
+        $("#main-body").append($(`<div id="fetchAlert" class='alert alert-warning'><strong>Loading...</strong> | Get a drink and relax. Party is starting soon <i class="bi bi-hourglass-split"></i></div>`))
     }
 
     async buildTable(data) {
         try {
+            if (!Array.isArray(data) || data.length === 0) throw new Error("Playlist empty!");
             let mostvoted = { item: null, index: 0 };
             // console.log(data, status);
             // const id3Array = JSON.parse(data);
@@ -70,6 +73,7 @@ class MainController {
 
     async buildJumbotron(data) {
         try {
+            if (!data || !data.track_id) throw new Error("No Song playing!");
             $("#currently-playing-container").attr('style', 'display: block !important');
             let artist = "";
             for (const [i, item] of data.artists.entries()) {
@@ -80,6 +84,7 @@ class MainController {
             $("#currently-playing-song").text(`${data.track}`);
             $("#currently-playing-meta").text(`${artist} | ${data.album}`);
         } catch (error) {
+            $("#currently-playing-container").attr('style', 'display: none; !important');
             console.error(error);
         }
     }
