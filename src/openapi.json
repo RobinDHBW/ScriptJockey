@@ -108,7 +108,7 @@
             }
         },
         "/fe/upvote": {
-            "get": {
+            "post": {
                 "tags": [
                     ""
                 ],
@@ -123,14 +123,14 @@
                 }
             }
         },
-        "/lyrics/{title}/{artist}": {
+        "/lyrics": {
             "get": {
                 "tags": [
                     "genius"
                 ],
                 "description": "get song lyrics by searching for title and artist",
                 "parameters": [{
-                        "in": "path",
+                        "in": "query",
                         "name": "title",
                         "description": "title of the song",
                         "required": true,
@@ -139,7 +139,7 @@
                         }
                     },
                     {
-                        "in": "path",
+                        "in": "query",
                         "name": "artist",
                         "description": "main artist of the song",
                         "required": true,

@@ -71,7 +71,7 @@ export class Spotify {
             });
             return url;
         } catch (error) {
-            console.error(error);
+            throw new Error(error);
         }
     };
 
@@ -350,7 +350,7 @@ export class Spotify {
                 message: "playback switched"
             };
         } catch (error) {
-            console.error(error);
+            throw new Error(error);
         }
     }
 
@@ -373,7 +373,7 @@ export class Spotify {
                 message: "successfully added to queue",
             };
         } catch (error) {
-            console.error(error);
+            throw new Error(error);
         }
     };
 
@@ -406,7 +406,7 @@ export class Spotify {
                 }
             });
         } catch (error) {
-            console.error(error);
+            throw new Error(error);
         }
     }
 
