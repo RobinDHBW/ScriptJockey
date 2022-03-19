@@ -116,10 +116,10 @@ export class GeniusApi {
      * @param  {any} req Url request containing song title and artist
      * @return {Object} Status code and lyrics when found, otherwise status code and error message
      */
-    async getLyrics(req: any) {
+    async getLyrics(titleIn: string, artistIn: string) {
         try {
-            var title = req.params.title.toLowerCase();
-            var artist = req.params.artist.toLowerCase();
+            let title = titleIn.toLowerCase();
+            let artist = artistIn.toLowerCase();
             artist = this.formatArtist(artist);
             title = title.replace(/'/g, "");
             title = title.replace(/’/g, "");
@@ -131,9 +131,9 @@ export class GeniusApi {
             for (var i = 0; i < hits.length; i++) {
                 if (this.containsArtist(hits[i].result.artist_names, artist) && this.containsTitleparts(hits[i].result.full_title, parts.titlePartsWithBrackets, parts.titleparts)) {
                     var lyricurl = "https://genius.com" + hits[i].result.path;
-                    var lyric = await this.genius.getLyrics(lyricurl);
+                    var lyrics = await this.genius.getLyrics(lyricurl);
                     return {
-                        lyrics: lyric
+                        lyrics
                     };
                 }
             }
@@ -145,18 +145,17 @@ export class GeniusApi {
 
                 if (this.containsArtist(hits[i].result.artist_names, artist) && this.containsTitleparts(hits[i].result.full_title, parts.titlePartsWithBrackets, parts.titleparts)) {
                     var lyricurl = "https://genius.com" + hits[i].result.path;
-                    var lyric = await this.genius.getLyrics(lyricurl);
+                    var lyrics = await this.genius.getLyrics(lyricurl);
                     return {
-                        lyrics: lyric
+                        lyrics
                     };
                 }
 
             }
-            return {
-                lyrics: null
-            };
+            throw new Error(`Lyrics not found for ${artist} - ${title}`);
 
         } catch (error) {
+            console.error(error);
             return {
                 lyrics: null
             }

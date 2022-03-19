@@ -16,6 +16,7 @@ class SocketIOListener {
         })
 
         this.#socket.on("update_current_song", (data) => {
+            this.#mainController.setActualSong(data);
             this.#mainController.buildJumbotron(data);
         })
 

@@ -33,7 +33,7 @@ import events from "events";
         const swaggerUi: SwaggerOptions = require('swagger-ui-express');
         const swaggerDocument: JSON = require('../src/openapi.json');
         app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-        let timerId: any;
+        let timerId: number;
         let djInTheHouse = false;
         let itsCallbackTime = false;
 
@@ -154,7 +154,7 @@ import events from "events";
                 } else {
                     djInTheHouse = true;
                     clearInterval(timerId);
-                    timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000);
+                    timerId = setInterval(async () => await spotifyAPI.refreshToken(), 3360000) as unknown as number;
                     // response.clearCookie("spotify_auth_state");
                     spotifyAPI.callback(code);
                     itsCallbackTime = true;
@@ -240,9 +240,9 @@ import events from "events";
             }
         });
 
-        app.get('/lyrics/:title/:artist', async function (request, response) {
+        app.get('/lyrics/', async function (request, response) {
             try {
-                response.json(await gApiAccess.getLyrics(request));
+                response.json(await gApiAccess.getLyrics(request.query.title as string, request.query.artist as string));
             } catch (error) {
                 /*console.error(error);
                 res.status(404).json({

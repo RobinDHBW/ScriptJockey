@@ -3,6 +3,7 @@
 class MainController {
     #router;
     #utils;
+    #actualSong;
 
     constructor(router, utils) {
         this.#router = router;
@@ -28,7 +29,7 @@ class MainController {
                     mostvoted.item = item;
                     mostvoted.index = index;
                 }
-                const tr = $(`<tr id='tr-${index}' class='id3table-row'></tr>`).appendTo(tbody);
+                const tr = $(`<tr id='tr-${index}' class='clickable'></tr>`).appendTo(tbody);
                 $(`<td class="text-center" id='${index}-title'>${item.track}</td>`).appendTo(tr);
                 $(`<td class="text-center" id='${index}-artist'>${item.artist}</td>`).appendTo(tr);
                 $(`<td class="text-center" id='${index}-album'>${item.album}</td>`).appendTo(tr);
@@ -55,7 +56,7 @@ class MainController {
                         //     console.error(e);
                         // }
                     })
-                })                
+                })
             })
             $(`#tr-${mostvoted.index}`).addClass("next-song");
         } catch (e) {
@@ -116,6 +117,7 @@ class MainController {
         try {
             $.get("/player", async (data) => {
                 try {
+                    this.#actualSong = data;
                     this.buildJumbotron(data);
                 } catch (e) {
                     console.error(e);
@@ -131,6 +133,37 @@ class MainController {
         } catch (error) {
             console.error(e)
             // this.errorMessage();
+        }
+    }
+
+    async getLyrics() {
+        try {
+            if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");
+            $.get("/lyrics/", { title: this.#actualSong.track, artist: this.#actualSong.artists[0] }, async (data) => {
+                try {
+                    // this.buildJumbotron(data);
+                    console.log(data);
+                } catch (e) {
+                    console.error(e);
+                }
+            }).fail(async () => {
+                try {
+                    throw new Error("Request failed!");
+                } catch (error) {
+                    console.error(error)
+                    // this.errorMessage();
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async setActualSong(data){
+        try {
+            this.#actualSong = data;
+        } catch (error) {
+            console.error(error);
         }
     }
 

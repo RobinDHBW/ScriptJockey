@@ -1,5 +1,4 @@
 import axios from "axios";
-import e from "express";
 
 export class Spotify {
     client_id: string;

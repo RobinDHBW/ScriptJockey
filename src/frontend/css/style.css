@@ -91,7 +91,7 @@ a {
     animation-iteration-count: infinite;
 }
 
-.id3table-row{
+.clickable{
     cursor: pointer;
 }
 
