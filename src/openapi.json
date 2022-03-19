@@ -9,8 +9,7 @@
             "email": "apiteam@swagger.io"
         }
     },
-    "tags": [
-        {
+    "tags": [{
             "name": "genius",
             "description": "accessing Genius API endpoints",
             "externalDocs": {
@@ -34,17 +33,15 @@
                     ""
                 ],
                 "description": "",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "title",
-                        "description": "title of the song",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "title",
+                    "description": "title of the song",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "Song lyrics",
@@ -56,8 +53,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Lyrics not found"
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -68,17 +65,15 @@
                     ""
                 ],
                 "description": "",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "title",
-                        "description": "title of the song",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "title",
+                    "description": "title of the song",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "Song lyrics",
@@ -90,8 +85,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Lyrics not found"
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -134,8 +129,7 @@
                     "genius"
                 ],
                 "description": "get song lyrics by searching for title and artist",
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "path",
                         "name": "title",
                         "description": "title of the song",
@@ -165,8 +159,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Lyrics not found"
+                    "501": {
+                        "description": ""
                     }
                 }
             }
@@ -209,17 +203,15 @@
                     "Spotify Web API"
                 ],
                 "description": "get content of playlist by id e.g. 1S2kiBvqOZHc4O1bWuVnro",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "playlist_id",
-                        "description": "playlist id",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "playlist_id",
+                    "description": "playlist id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "A playlist",
@@ -278,17 +270,15 @@
                     "Spotify Web API"
                 ],
                 "description": "add track to queue by id e.g. 64BbK9SFKH2jk86U3dGj2P",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "track_id",
-                        "description": "track id",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "track_id",
+                    "description": "track id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "successfully added to queue"
@@ -354,17 +344,15 @@
                     "Spotify Web API"
                 ],
                 "description": "transfer playback to the given device id",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "device_id",
-                        "description": "device id",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "device_id",
+                    "description": "device id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "playback switched"
