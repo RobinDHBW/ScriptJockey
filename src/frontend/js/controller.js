@@ -4,10 +4,12 @@ class MainController {
     #router;
     #utils;
     #actualSong;
+    #jumbotronExpanded;
 
     constructor(router, utils) {
         this.#router = router;
         this.#utils = utils;
+        this.#jumbotronExpanded = false;
     }
 
     async errorMessage() {
@@ -136,13 +138,15 @@ class MainController {
         }
     }
 
-    async getLyrics() {
+    async getLyrics(force) {
         try {
-            if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");
+            if (!force) this.#jumbotronExpanded = !this.#jumbotronExpanded;
+            if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");           
+            if (!this.#jumbotronExpanded) return;
             $.get("/lyrics/", { title: this.#actualSong.track, artist: this.#actualSong.artists[0] }, async (data) => {
                 try {
-                    // this.buildJumbotron(data);
-                    console.log(data);
+                    $("#lyric-container").empty();
+                    $("#lyric-container").append(`<span>${data.lyrics || "Error | No lyrics found!"}</span>`)
                 } catch (e) {
                     console.error(e);
                 }
@@ -151,7 +155,6 @@ class MainController {
                     throw new Error("Request failed!");
                 } catch (error) {
                     console.error(error)
-                    // this.errorMessage();
                 }
             });
         } catch (error) {
@@ -159,9 +162,17 @@ class MainController {
         }
     }
 
-    async setActualSong(data){
+    async setActualSong(data) {
         try {
             this.#actualSong = data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getLyricExpanded() {
+        try {
+            return this.#jumbotronExpanded;
         } catch (error) {
             console.error(error);
         }
