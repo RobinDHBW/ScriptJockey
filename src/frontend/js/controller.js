@@ -139,10 +139,10 @@ class MainController {
     async getLyrics() {
         try {
             if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");
+            $("#lyric-container").empty();
             $.get("/lyrics/", { title: this.#actualSong.track, artist: this.#actualSong.artists[0] }, async (data) => {
                 try {
-                    // this.buildJumbotron(data);
-                    console.log(data);
+                    $("#lyric-container").append(`<span>${data.lyrics}</span>`)
                 } catch (e) {
                     console.error(e);
                 }
@@ -151,7 +151,6 @@ class MainController {
                     throw new Error("Request failed!");
                 } catch (error) {
                     console.error(error)
-                    // this.errorMessage();
                 }
             });
         } catch (error) {

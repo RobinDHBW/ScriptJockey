@@ -33,8 +33,9 @@
                 </div>
             </div>
             <div class="col-sm-1">
-                <a class="bi bi-arrows-angle-expand clickable" href="javascript:mainController.getLyrics()"></a>
+                <a class="bi bi-arrows-angle-expand clickable" onclick="mainController.getLyrics()" data-bs-toggle="collapse" href="#lyric-container"></a>
             </div>
         </div>
+        <div class="collapse container lyrics-container lyrics-line-break" id="lyric-container" data-bs-parent="#currently-playing-container"></div>
     </div>
 </div>

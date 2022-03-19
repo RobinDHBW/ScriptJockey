@@ -134,3 +134,12 @@ a {
 .container-song-info {
     max-width: 480px !important;
 }
+
+.lyrics-line-break{
+    white-space: pre-wrap;
+}
+
+.lyrics-container{
+    max-height: 20em !important;
+    overflow-y: auto !important;
+}
