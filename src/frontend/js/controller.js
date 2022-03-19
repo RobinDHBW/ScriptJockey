@@ -141,8 +141,13 @@ class MainController {
     async getLyrics(force) {
         try {
             if (!force) this.#jumbotronExpanded = !this.#jumbotronExpanded;
-            if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");           
-            if (!this.#jumbotronExpanded) return;
+            if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");
+
+            if (!this.#jumbotronExpanded) {
+                $("#lyric-container").empty();
+                return;
+            }
+
             $.get("/lyrics/", { title: this.#actualSong.track, artist: this.#actualSong.artists[0] }, async (data) => {
                 try {
                     $("#lyric-container").empty();
@@ -165,6 +170,14 @@ class MainController {
     async setActualSong(data) {
         try {
             this.#actualSong = data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getActualSong() {
+        try {
+            return this.#actualSong;
         } catch (error) {
             console.error(error);
         }

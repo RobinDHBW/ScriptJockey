@@ -15,10 +15,16 @@ class SocketIOListener {
             this.#mainController.buildTable(data);
         })
 
-        this.#socket.on("update_current_song", (data) => {
-            this.#mainController.setActualSong(data);
-            this.#mainController.buildJumbotron(data);
-            if (this.#mainController.getLyricExpanded()) this.#mainController.getLyrics(true);
+        this.#socket.on("update_current_song", async (data) => {
+            try {
+                const currentSong = await this.#mainController.getActualSong();
+                if (currentSong && currentSong.track_id === data.track_id) return;
+                this.#mainController.setActualSong(data);
+                this.#mainController.buildJumbotron(data);
+                if (await this.#mainController.getLyricExpanded()) this.#mainController.getLyrics(true);
+            } catch (error) {
+                console.error(error);
+            }
         })
 
         this.#socket.on("spotify_auth_finished_successful", (data) => {
