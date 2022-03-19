@@ -188,7 +188,7 @@ import events from "events";
             }
         });
 
-        app.get("/player/pause", async function (request, response) {
+        app.put("/player/pause", async function (request, response) {
             try {
                 response.status(200).send(await spotifyAPI.pausePlayer());
             } catch (error) {
@@ -198,7 +198,7 @@ import events from "events";
             }
         });
 
-        app.get("/player/play", async function (request, response) {
+        app.put("/player/play", async function (request, response) {
             try {
                 response.status(200).send(await spotifyAPI.playPlayer());
             } catch (error) {
@@ -208,9 +208,9 @@ import events from "events";
             }
         });
 
-        app.get("/switchPlayer/:device_id", async function (request, response) {
+        app.put("/switchPlayer", async function (request, response) {
             try {
-                var id = request.params.device_id;
+                var id = request.body.id;
                 response.send(await spotifyAPI.transferPlayback(id));
             } catch (error) {
                 console.error(error);
@@ -219,9 +219,9 @@ import events from "events";
             }
         });
 
-        app.get("/player/queue/:track_id", async function (request, response) {
+        app.post("/player/queue", async function (request, response) {
             try {
-                var id = request.params.track_id;
+                var id = request.body.id;
                 response.send(await spotifyAPI.addTracktoQueue(id));
             } catch (error) {
                 console.error(error);
