@@ -118,7 +118,7 @@ import events from "events";
 
         app.post('/fe/upvote', async (request: express.Request, response: express.Response) => {
             try {
-                spotifyAPI.upvote(request.body.id);
+                await spotifyAPI.upvote(request.body.id);
                 io.emit("update_playlist", await spotifyAPI.getPlaylist())
                 //TODO socket push -> Update all playlists
                 return response.send("done");
