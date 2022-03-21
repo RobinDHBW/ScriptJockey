@@ -31,16 +31,20 @@ export class Spotify {
         this.timer = null;
     }
 
-    getAccessToken() {
+    /**
+    * Getter for access token 
+    * @return {string} access token 
+    */
+    getAccessToken(): string {
         return this.access_token;
     }
 
     /**
-     * Generates a random string containing numbers and letters
+     * generate a random string containing numbers and letters
      * @param  {number} length The length of the string
      * @return {string} The generated string
      */
-    generateRandomString(length: number) {
+    generateRandomString(length: number): string {
         try {
             var text = "";
             var possible =
@@ -57,7 +61,12 @@ export class Spotify {
         }
     };
 
-    login(state: string) {
+    /**
+     * generate URL for Spotify-Login
+     * @param  {string} state state of authorization, provides protection
+     * @return {URLSearchParams} The generated URL
+     */
+    login(state: string): URLSearchParams {
         try {
             var scope =
                 "user-read-private user-read-email playlist-read-private user-read-playback-state user-modify-playback-state streaming";
@@ -75,10 +84,13 @@ export class Spotify {
         }
     };
 
-    async callback(code: any) {
+    /**
+     * set access and refresh token 
+     * @param  {any} code authorization code 
+     * @return {URLSearchParams} redirect URL
+     */
+    async callback(code: any): Promise<URLSearchParams> {
         try {
-            // your application requests refresh and access tokens
-            // after checking the state parameter
             const url = process.env.SPOTIFY_TOKEN_URL;
             var authOptions = {
                 url,
@@ -104,7 +116,6 @@ export class Spotify {
                 authOptions
             );
 
-
             if (!response.data.error && response.status === 200) {
                 this.access_token = response.data.access_token;
                 this.refresh_token = response.data.refresh_token;
@@ -114,13 +125,12 @@ export class Spotify {
                     headers: { Authorization: "Bearer " + this.access_token },
                     json: true,
                 };
-                // use the access token to access the Spotify Web API
+
                 const response2 = await axios.get(
                     "https://api.spotify.com/v1/me",
                     options
                 );
 
-                // we can also pass the token to the browser to make requests from there
                 var redirectUrl = new URLSearchParams({
                     access_token: this.access_token,
                     refresh_token: this.refresh_token,
@@ -134,6 +144,9 @@ export class Spotify {
         }
     };
 
+    /**
+     * refresh access token 
+     */
     async refreshToken() {
         try {
             var url = "https://accounts.spotify.com/api/token";
@@ -167,7 +180,12 @@ export class Spotify {
         }
     };
 
-    async fetchPlaylist(id: string) {
+    /**
+     * fetch content of Spotify-Playlist 
+     * @param  {string} id playlist id 
+     * @return {Array<any>} Playlist-Content 
+     */
+    async fetchPlaylist(id: string): Promise<any[]> {
         try {
             this.playlistContent = new Array<Object>();
             var _this = this;
@@ -218,7 +236,12 @@ export class Spotify {
         }
     };
 
-    calculateDuration(duration: number) {
+    /**
+     * convert duration from milliseconds to minutes:seconds
+     * @param  {number} duration duration in ms 
+     * @return {string} duration in format minutes:seconds 
+     */
+    calculateDuration(duration: number): string {
         return (
             Math.trunc(duration / 60000) +
             ":" +
@@ -228,7 +251,11 @@ export class Spotify {
         );
     };
 
-    async getPlayer() {
+    /**
+     * get current player and currently played track
+     * @return {any} currently playing 
+     */
+    async getPlayer(): Promise<any> {
         try {
             this.currentlyPlaying = new Object();
             var _this = this;
@@ -285,7 +312,11 @@ export class Spotify {
         }
     };
 
-    async pausePlayer() {
+    /**
+     * pause current player 
+     * @return {object} response-message 
+     */
+    async pausePlayer(): Promise<object> {
         try {
             var url =
                 "https://api.spotify.com/v1/me/player/pause?device_id=" +
@@ -307,7 +338,11 @@ export class Spotify {
         }
     };
 
-    async playPlayer() {
+    /**
+     * play current player 
+     * @return {object} response-message 
+     */
+    async playPlayer(): Promise<object> {
         try {
             var url =
                 "https://api.spotify.com/v1/me/player/play?device_id=" +
@@ -328,7 +363,12 @@ export class Spotify {
         }
     };
 
-    async transferPlayback(id: string) {
+    /**
+     * transfer playback to another device
+     * @param  {string} id device id which gets the playback    
+     * @return {object} response-message 
+     */
+    async transferPlayback(id: string): Promise<object> {
         try {
             this.device_id = id;
             var url = "https://api.spotify.com/v1/me/player";
@@ -354,7 +394,12 @@ export class Spotify {
         }
     }
 
-    async addTracktoQueue(id: string) {
+    /**
+     * add track to queue
+     * @param  {string} id song id which has to be added to queue 
+     * @return {object} response-message 
+     */
+    async addTracktoQueue(id: string): Promise<object> {
         try {
             var url =
                 "https://api.spotify.com/v1/me/player/queue?uri=spotify:track:" +
@@ -377,7 +422,11 @@ export class Spotify {
         }
     };
 
-    async getDevices() {
+    /**
+     * get available devices 
+     * @return {object} available devices 
+     */
+    async getDevices(): Promise<object> {
         try {
             var url = "https://api.spotify.com/v1/me/player/devices";
             var options = {
@@ -387,13 +436,16 @@ export class Spotify {
             };
 
             const response = await axios.get(url, options);
-            //this.device_id = response.data.device.id;
             return response.data;
         } catch (error) {
             console.error(error);
         }
     };
 
+    /**
+     * upvote a track
+     * @param  {string} track_id track id which has to be upvoted  
+     */
     async upvote(track_id: string) {
         try {
             const track = this.playlistContent.find(item => item.id === track_id);
@@ -410,7 +462,11 @@ export class Spotify {
         }
     }
 
-    async getPlaylist() {
+    /**
+     * Getter for playlist content 
+     * @return  {Array<any>} Playlist-Content
+     */
+    async getPlaylist(): Promise<any[]> {
         try {
             if (!Array.isArray(this.playlistContent) || this.playlistContent.length === 0) throw new Error("Playlist empty - fetch first!");
             return this.playlistContent;
@@ -420,14 +476,14 @@ export class Spotify {
         }
     }
 
+    /**
+     * start voting  
+     */
     async startVoting() {
         try {
             if (this.duration_ms - this.progress_ms < 10000 && this.lastSongAdded.id === this.currentlyPlaying.track_id) {
                 await this.addTracktoQueue(this.songWithMostVotes.id);
                 this.lastSongAdded = this.songWithMostVotes;
-                /*this.playlistContent.forEach(item => {
-                    item.votes = 0;
-                });*/
                 const track = this.playlistContent.find(item => item.id === this.songWithMostVotes.id);
                 this.playlistContent.splice(this.playlistContent.indexOf(track), 1);
                 this.songWithMostVotes = this.playlistContent[0];
@@ -457,6 +513,9 @@ export class Spotify {
         }
     }
 
+    /**
+     * reset last song added to null 
+     */
     async resetLastSongAdded() {
         this.lastSongAdded = null;
     }

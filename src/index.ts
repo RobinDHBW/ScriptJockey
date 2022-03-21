@@ -14,9 +14,6 @@ import events from "events";
 
 (async function () {
     try {
-
-        //@TODO: Zugriff auf Spotify Nutzerdaten über process.env.SPOTIFY_USER || process.env.SPOTIFY_PW
-
         /**************************
         Web server Configuration
         **************************/
@@ -27,7 +24,6 @@ import events from "events";
         let spotifyAPI: Spotify;
         const eventEmitter = new events.EventEmitter();
 
-
         dotenv.config({ path: path.join(__dirname, (process.env.NODE_ENV ? `./.env.${process.env.NODE_ENV}` : ".env")) })
 
         const swaggerUi: SwaggerOptions = require('swagger-ui-express');
@@ -36,8 +32,7 @@ import events from "events";
         let timerId: number;
         let djInTheHouse = false;
         let itsCallbackTime = false;
-
-        //app.use(express.static(__dirname + '/public'));        
+       
         app.use(cookieParser());
 
         //Here we are configuring express to use body-parser as middle-ware.
