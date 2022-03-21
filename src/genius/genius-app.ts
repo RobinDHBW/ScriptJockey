@@ -15,7 +15,7 @@ export class GeniusApi {
      * @param  {string} length The title of the song
      * @return {string} The new song title
      */
-    formatTitle(title: string) {
+    formatTitle(title: string): string {
         title = title.replace("feat.", "");
         title = title.replace("ft.", "");
         title = title.replace(/&/g, "");
@@ -32,7 +32,7 @@ export class GeniusApi {
      * @param  {string} title The title of the song
      * @return {string} The title without the brackets
      */
-    shortTitle(title: string) {
+    shortTitle(title: string): string {
         var i1 = title.indexOf("(");
         var i2 = title.indexOf(")");
         title = title.replace(")", "");
@@ -47,7 +47,7 @@ export class GeniusApi {
      * @param  {string} artist The artist of the song
      * @return {string} The new artist
      */
-    formatArtist(artist: string) {
+    formatArtist(artist: string): string {
         artist = artist.replace(/å/g, "a");
         artist = artist.replace(/&/g, " ");
         return artist;
@@ -58,7 +58,7 @@ export class GeniusApi {
      * @param  {string} title The title of the song
      * @return {string[], string[]} the words of the song with parts in brackets and without parts in bracket
      */
-    getTitleparts(title: string) {
+    getTitleparts(title: string): any {
         var i1 = title.indexOf("(");
         var i2 = title.indexOf(")");
         title = title.replace(")", "");
@@ -77,7 +77,7 @@ export class GeniusApi {
      * @param  {string[]} titleParts words of the song title from the url without parts in brackets
      * @return {boolean} True, if title from genius-api contains all words from title in url
      */
-    containsTitleparts(geniusTitle: string, titlePartsWithBrackets: string[], titleparts: string[]) {
+    containsTitleparts(geniusTitle: string, titlePartsWithBrackets: string[], titleparts: string[]): boolean {
         var gtitle = geniusTitle.toLowerCase();
         gtitle = gtitle.replace(/'/g, "");
         gtitle = gtitle.replace(/’/g, "");
@@ -100,7 +100,7 @@ export class GeniusApi {
      * @param  {string} urlArtist artist of the song given by url
      * @return {boolean} True, if artist from genius-api contains all words from artist in url
      */
-    containsArtist(geniusArtist: string, urlArtist: string) {
+    containsArtist(geniusArtist: string, urlArtist: string): boolean {
         geniusArtist = geniusArtist.toLowerCase().replace(/å/g, "a");
         var artistparts = urlArtist.split(" ");
         for (var i = 0; i < artistparts.length; i++) {
@@ -116,7 +116,7 @@ export class GeniusApi {
      * @param  {any} req Url request containing song title and artist
      * @return {Object} Status code and lyrics when found, otherwise status code and error message
      */
-    async getLyrics(titleIn: string, artistIn: string) {
+    async getLyrics(titleIn: string, artistIn: string): Promise<any> {
         try {
             let title = titleIn.toLowerCase();
             let artist = artistIn.toLowerCase();
