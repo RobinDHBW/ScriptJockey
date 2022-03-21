@@ -1,11 +1,19 @@
 "use strict"
 
+/**
+ * Main Controller for SPA-Coordination and DOM-Manipulation
+ */
 class MainController {
     #router;
     #utils;
     #actualSong;
     #jumbotronExpanded;
 
+    /**
+     * new MainController
+     * @param {Object} router - Reference of Router instance 
+     * @param {Object} utils - Reference of Utils instance
+     */
     constructor(router, utils) {
         this.#router = router;
         this.#utils = utils;
