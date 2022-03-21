@@ -14,9 +14,6 @@ import events from "events";
 
 (async function () {
     try {
-
-        //@TODO: Zugriff auf Spotify Nutzerdaten über process.env.SPOTIFY_USER || process.env.SPOTIFY_PW
-
         /**************************
         Web server Configuration
         **************************/
@@ -27,7 +24,6 @@ import events from "events";
         let spotifyAPI: Spotify;
         const eventEmitter = new events.EventEmitter();
 
-
         dotenv.config({ path: path.join(__dirname, (process.env.NODE_ENV ? `./.env.${process.env.NODE_ENV}` : ".env")) })
 
         const swaggerUi: SwaggerOptions = require('swagger-ui-express');
@@ -37,7 +33,6 @@ import events from "events";
         let djInTheHouse = false;
         let itsCallbackTime = false;
 
-        //app.use(express.static(__dirname + '/public'));        
         app.use(cookieParser());
 
         //Here we are configuring express to use body-parser as middle-ware.
@@ -129,6 +124,9 @@ import events from "events";
             }
         })
 
+        /**
+        * redirect to Spotify login page 
+        */
         app.get("/login", function (request, response) {
             try {
                 const state = spotifyAPI.generateRandomString(16);
@@ -141,6 +139,9 @@ import events from "events";
             }
         });
 
+        /**
+        * callback, generate access and refresh token 
+        */
         app.get("/callback", async function (request, response) {
             try {
                 var code = request.query.code || null;
@@ -168,6 +169,9 @@ import events from "events";
             }
         });
 
+        /**
+        * get playlist content by id 
+        */
         app.get("/playlists/:playlist_id", async function (request, response) {
             try {
                 response.json(await spotifyAPI.fetchPlaylist(request.params.playlist_id));
@@ -178,6 +182,9 @@ import events from "events";
             }
         });
 
+        /**
+        * get current player and currently played track
+        */
         app.get("/player", async function (request, response) {
             try {
                 response.send(await spotifyAPI.getPlayer());
@@ -188,6 +195,9 @@ import events from "events";
             }
         });
 
+        /**
+        * pause current player
+        */
         app.put("/player/pause", async function (request, response) {
             try {
                 response.status(200).send(await spotifyAPI.pausePlayer());
@@ -198,6 +208,9 @@ import events from "events";
             }
         });
 
+        /**
+        * play current player
+        */
         app.put("/player/play", async function (request, response) {
             try {
                 response.status(200).send(await spotifyAPI.playPlayer());
@@ -208,6 +221,9 @@ import events from "events";
             }
         });
 
+        /**
+        * switch current player
+        */
         app.put("/switchPlayer", async function (request, response) {
             try {
                 var id = request.body.id;
@@ -219,6 +235,9 @@ import events from "events";
             }
         });
 
+        /**
+        * add track to queue by id 
+        */
         app.post("/player/queue", async function (request, response) {
             try {
                 var id = request.body.id;
@@ -230,6 +249,9 @@ import events from "events";
             }
         });
 
+        /**
+        * get available devices
+        */
         app.get("/player/devices", async function (request, response) {
             try {
                 response.send(await spotifyAPI.getDevices());
@@ -240,6 +262,9 @@ import events from "events";
             }
         });
 
+        /**
+        * get lyrics to song and artist  
+        */
         app.get('/lyrics/', async function (request, response) {
             try {
                 response.json(await gApiAccess.getLyrics(request.query.title as string, request.query.artist as string));
