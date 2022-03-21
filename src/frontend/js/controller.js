@@ -12,6 +12,10 @@ class MainController {
         this.#jumbotronExpanded = false;
     }
 
+    /**
+     * DOM-Manipulation to display alert
+     * @returns {Promise}
+     */
     async errorMessage() {
         $("#automatedID3Table").empty();
         $("#spinning-sheep-gatter").attr('style', 'display: none !important');
@@ -19,6 +23,11 @@ class MainController {
         $("#main-body").append($(`<div id="fetchAlert" class='alert alert-warning'><strong>Loading...</strong> | Get a drink and relax. Party is starting soon <i class="bi bi-hourglass-split"></i></div>`))
     }
 
+    /**
+     * DOM-Manipulation to display a HTML-Table on base of a playlist
+     * @param {Array} data - Array of PlaylistItems
+     * @returns {Promise}
+     */
     async buildTable(data) {
         try {
             if (!Array.isArray(data) || data.length === 0) throw new Error("Playlist empty!");
@@ -40,27 +49,9 @@ class MainController {
                 $(`<td class="text-center" id='${index}-album'>${item.album}</td>`).appendTo(tr);
                 $(`<td class="text-center" id='${index}-vote'>${item.votes}</td>`).appendTo(tr);
 
-                // // imageBuffer to blob - not properly working
-                // if (item.image) {
-                //     const arrayBufferView = new Uint8Array(item.image.imageBuffer);
-                //     const blob = new Blob([arrayBufferView], { type: "image/" + item.image.mime });
-                //     let imageUrl = window.URL.createObjectURL(blob);
-                //     $(`<td><img src='${imageUrl}'></td>`).appendTo(tr);
-                // }
-
                 tr.click(() => {
                     item.votes++;
-                    $.post('/fe/upvote', { id: item.id }, async (data) => {
-                        // try {
-                        //     if (data === "done") {
-                        //         $('#' + index + '-vote').html(item.votes);
-                        //     } else {
-                        //         item.votes--;
-                        //     }
-                        // } catch (e) {
-                        //     console.error(e);
-                        // }
-                    })
+                    $.post('/fe/upvote', { id: item.id });
                 })
             })
             $(`#tr-${mostvoted.index}`).addClass("next-song");
@@ -71,6 +62,11 @@ class MainController {
 
     }
 
+    /**
+     * DOM-Manipulation to display a Bootstrap5 Jumbotron for current song
+     * @param {Object} data - single PlaylistItem
+     * @returns {Promise}
+     */
     async buildJumbotron(data) {
         try {
             if (!data || !data.track_id) throw new Error("No Song playing!");
@@ -89,6 +85,11 @@ class MainController {
         }
     }
 
+    /**
+     * Display loading-spinner and fetch Playlist - coordinate table building from data
+     * @param {boolean} force - true forces the backend to resynchronize the playlist from spotify
+     * @returns {Promise}
+     */
     async initPlaylist(force) {
         try {
             await this.#router.getStart();
@@ -120,6 +121,10 @@ class MainController {
         }
     }
 
+    /**
+     * Fetch actual song and coordinate jumbotron building
+     * @returns {Promise}
+     */
     async getActualPlaying() {
         try {
             $.get("/player", async (data) => {
@@ -143,9 +148,14 @@ class MainController {
         }
     }
 
-    async getLyrics(force) {
+    /**
+     * Fetch lyrics to actual sonng and coordinate Jumbotron expanding
+     * @param {boolean} dataUpdate - If true the Jumbotron stays in actual displayed expandation state
+     * @returns {Promise}
+     */
+    async getLyrics(dataUpdate) {
         try {
-            if (!force) this.#jumbotronExpanded = !this.#jumbotronExpanded;
+            if (!dataUpdate) this.#jumbotronExpanded = !this.#jumbotronExpanded;
             if (!this.#actualSong) throw new Error("No Song defined to crawl lyrics for");
 
             if (!this.#jumbotronExpanded) {
@@ -172,6 +182,11 @@ class MainController {
         }
     }
 
+    /**
+     * Setter for private Attrbiut #actualSong
+     * @param {Object} data - single PlaylistItem
+     * @returns {Promise}
+     */
     async setActualSong(data) {
         try {
             this.#actualSong = data;
@@ -180,6 +195,11 @@ class MainController {
         }
     }
 
+    /**
+     * Getter for private Attrbiut #actualSong
+     * @returns {Promise}
+     * @returns {Object} - single PlaylistItem
+     */
     async getActualSong() {
         try {
             return this.#actualSong;
@@ -188,6 +208,10 @@ class MainController {
         }
     }
 
+    /**
+     * Getter for private Attrbiut #jumbotronExpanded
+     * @returns {boolean} - if true Jumbotron is expanded for lyrics
+     */
     async getLyricExpanded() {
         try {
             return this.#jumbotronExpanded;
