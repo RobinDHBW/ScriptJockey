@@ -5,13 +5,17 @@ class Scratcher {
     constructor() {
     }
 
+    /**
+     * 
+     * @param {DOM} data - HTML DOM Element to put into container
+     */
     async #appendToMain(data) {
         $("#main-body").empty();
         $("#main-body").append(data);
     }
 
     /**
-     * 
+     * Get DOM Data from Backend
      */
     async getStart() {
         try {
@@ -21,7 +25,7 @@ class Scratcher {
     }
 
     /**
-     * 
+     * Get DOM Data from Backend
      */
     async getBackroom() {
         try {
