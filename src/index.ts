@@ -284,10 +284,6 @@ import events from "events";
             try {
                 response.json(await gApiAccess.getLyrics(request.query.title as string, request.query.artist as string));
             } catch (error) {
-                /*console.error(error);
-                res.status(404).json({
-                    message: error.message,
-                });*/
                 console.error(error);
                 response.status(501);
                 response.send(error.message);
