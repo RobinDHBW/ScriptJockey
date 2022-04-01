@@ -1,0 +1,520 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "scriptjockey",
+        "version": "1.0.0",
+        "description": "Let em vote. Enjoy yourself."
+    },
+    "tags": [
+        {
+            "name": "Genius",
+            "description": "accessing Genius API endpoints",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://docs.genius.com/"
+            }
+        },
+        {
+            "name": "Spotify Web API",
+            "description": "accessing Spotify Web API endpoints",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://developer.spotify.com/documentation/web-api/reference/#/"
+            }
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "ScriptJockey-Frontend"
+                ],
+                "description": "Initial request to load the frontend",
+                "responses": {
+                    "200": {
+                        "description": "index.html"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/fe/start": {
+            "get": {
+                "tags": [
+                    "ScriptJockey-Frontend"
+                ],
+                "description": "start.html",
+                "responses": {
+                    "200": {
+                        "description": "HTML start page"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/fe/backroom-poker": {
+            "get": {
+                "tags": [
+                    "ScriptJockey-Frontend"
+                ],
+                "parameters": [
+                    {
+                        "in": "cookies",
+                        "name": "spotify_auth_state",
+                        "description": "Cookie for spotify authentication",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "description": "load HTML page for DJ Settings",
+                "responses": {
+                    "200": {
+                        "description": "backroom.html"
+                    },
+                    "250": {
+                        "description": "link to spotify login"
+                    },
+                    "330": {
+                        "description": "deny access"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/fe/sync": {
+            "get": {
+                "tags": [
+                    "ScriptJockey-Frontend"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "force",
+                        "description": "Force to fetch playlist from spotify",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "description": "Sync Scriptjockey middleware with Spotify, fetch the playlist",
+                "responses": {
+                    "200": {
+                        "description": "playListContent:Array"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    },
+                    "550": {
+                        "description": "not authenticated yet"
+                    }
+                }
+            }
+        },
+        "/fe/upvote": {
+            "post": {
+                "tags": [
+                    "ScriptJockey-Frontend"
+                ],
+                "requestBody": {
+                    "description": "id to upvote a song",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Upvote"
+                            }
+                        }
+                    }
+                },
+                "description": "Upvote a song in the loaded playlist",
+                "responses": {
+                    "200": {
+                        "description": "done"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/lyrics": {
+            "get": {
+                "tags": [
+                    "Genius"
+                ],
+                "description": "get song lyrics by searching for title and artist",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "title",
+                        "description": "title of the song",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "artist",
+                        "description": "main artist of the song",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Song lyrics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Lyrics"
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "requests user authorization to access data @try it out doesn't work in Swagger-UI",
+                "responses": {
+                    "200": {
+                        "description": "redirects to Spotify Accounts Service, login prompt"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/callback": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "requests access and refresh token, is called after successful login @try it out doesn't work in Swagger-UI",
+                "responses": {
+                    "200": {
+                        "description": "sets access and refresh token"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/playlists/{playlist_id}": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "get content of playlist by id e.g. 1S2kiBvqOZHc4O1bWuVnro",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "playlist_id",
+                        "description": "playlist id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A playlist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Track"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/player/pause": {
+            "put": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "pause current playback",
+                "responses": {
+                    "200": {
+                        "description": "successfully paused"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/player/play": {
+            "put": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "resume current playback",
+                "responses": {
+                    "200": {
+                        "description": "successfully played"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/player/queue": {
+            "post": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "add track to queue by id e.g. 64BbK9SFKH2jk86U3dGj2P",
+                "requestBody": {
+                    "description": "song to add, id is required",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Track"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully added to queue"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/player": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "get information about the user's current player and playback state",
+                "responses": {
+                    "200": {
+                        "description": "current playback state and current song",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrentTrack"
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/player/devices": {
+            "get": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "get user's available devices",
+                "responses": {
+                    "200": {
+                        "description": "available devices",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Device"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        },
+        "/switchPlayer": {
+            "put": {
+                "tags": [
+                    "Spotify Web API"
+                ],
+                "description": "transfer playback to the given device id",
+                "requestBody": {
+                    "description": "device transfer, id is required",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Device"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "playback switched"
+                    },
+                    "501": {
+                        "description": "internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Upvote": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "nullable": true
+            },
+            "Lyrics": {
+                "type": "object",
+                "properties": {
+                    "lyrics": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CurrentTrack": {
+                "type": "object",
+                "properties": {
+                    "track": {
+                        "type": "string"
+                    },
+                    "track_id": {
+                        "type": "string"
+                    },
+                    "device": {
+                        "type": "string"
+                    },
+                    "device_id": {
+                        "type": "string"
+                    },
+                    "artists": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "album": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "type": "string"
+                    },
+                    "progress": {
+                        "type": "string"
+                    },
+                    "isPlayed": {
+                        "type": "boolean"
+                    },
+                    "playlist_id": {
+                        "type": "string"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Track": {
+                "type": "object",
+                "properties": {
+                    "track": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "artist": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "album": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "type": "string"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "votes": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "Device": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "is_private_session": {
+                        "type": "boolean"
+                    },
+                    "is_restricted": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "volume_percent": {
+                        "type": "integer"
+                    }
+                }
+            }
+        }
+    }
+}

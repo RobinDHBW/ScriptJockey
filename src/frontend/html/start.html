@@ -1,0 +1,43 @@
+<!-- main-body -->
+<div id="automatedID3List" class="mb-currently-playing">
+    <table id="id3Table" class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-center">Title</th>
+                <th class="text-center">Artist</th>
+                <th class="text-center">Album</th>
+                <th class="text-center">Vote</th>
+                <!-- <th>Cover</th> -->
+            </tr>
+        </thead>
+        <tbody id="automatedID3Table">
+        </tbody>
+    </table>
+
+</div>
+<div id="spinning-sheep-gatter" class="gatter d-flex align-items-center h-100" style="display: none !important">
+    <img src="./img/sheep_your_head_right_round.png" class="loading-spinner animated pulse mx-auto d-block">
+</div>
+<div id="currently-playing-container" class="container-fluid fixed-bottom mt-4 p-4 bg-secondary text-white rounded">
+    <div class="container container-song-info mx-auto">
+        <div class="d-flex flex-row">
+            <div class="col-sm-2">
+                <img id="currently-playing-image">
+            </div>
+            <div class="col-sm-9">
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                    <span class="song-title" id="currently-playing-song">&nbsp;</span>
+                </div>
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                    <span class="song-meta" id="currently-playing-meta">&nbsp;</span>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <a class="bi bi-arrows-angle-expand clickable" onclick="mainController.getLyrics()" data-bs-toggle="collapse" href="#lyric-container"></a>
+            </div>
+        </div>
+        <hr>
+        <div class="collapse container lyrics-container lyrics-line-break" id="lyric-container" data-bs-parent="#currently-playing-container">            
+        </div>
+    </div>
+</div>

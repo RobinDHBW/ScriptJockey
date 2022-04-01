@@ -1,3 +1,6 @@
 .vs/
 dist/
 node_modules/
+.env
+*.log
+docker-images/
