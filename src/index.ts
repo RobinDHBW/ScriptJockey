@@ -48,7 +48,7 @@ import events from "events";
 
         /**
         * initial hook
-        * send startpage
+        * get index.html
         */
         app.get('/', async (request: express.Request, response: express.Response) => {
             try {
@@ -60,6 +60,9 @@ import events from "events";
             }
         });
 
+        /**
+         * get start.html
+         */
         app.get('/fe/start', async (request: express.Request, response: express.Response) => {
             try {
                 return response.sendFile(path.resolve(__dirname + "/frontend/html/start.html"));
@@ -70,6 +73,11 @@ import events from "events";
             }
         });
 
+        /**
+         * if(authenticated): get backroom.html
+         * if(not authenticated): redirect to spotify
+         * else: deny access
+         */
         app.get('/fe/backroom-poker', async (request: express.Request, response: express.Response) => {
             try {
                 if (request.cookies && request.cookies["spotify_auth_state"] && djInTheHouse) {
@@ -90,6 +98,10 @@ import events from "events";
             }
         });
 
+        /**
+         * get playlist
+         * if empty: fetch from spotify
+         */
         app.get('/fe/sync', async (request: express.Request, response: express.Response) => {
             try {
                 if (!djInTheHouse) throw new Error("Not authenticated yet!");
@@ -111,11 +123,14 @@ import events from "events";
             }
         });
 
+        /**
+         * post single track upvote to backend
+         * update all clients per socket event
+         */
         app.post('/fe/upvote', async (request: express.Request, response: express.Response) => {
             try {
                 await spotifyAPI.upvote(request.body.id);
-                io.emit("update_playlist", await spotifyAPI.getPlaylist())
-                //TODO socket push -> Update all playlists
+                io.emit("update_playlist", await spotifyAPI.getPlaylist());
                 return response.send("done");
             } catch (error) {
                 console.error(error);

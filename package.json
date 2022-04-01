@@ -1,6 +1,6 @@
 {
   "name": "scriptjockey",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Let em vote. Enjoy yourself.",
   "main": "dist/index.js",
   "scripts": {

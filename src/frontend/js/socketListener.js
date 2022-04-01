@@ -5,6 +5,14 @@ class SocketIOListener {
     #mainController
     #router;
     #utils;
+
+    /**
+     * 
+     * @param {socket.io} socket 
+     * @param {MainController} controller 
+     * @param {Scratcher} router 
+     * @param {Utils} utils 
+     */
     constructor(socket, controller, router, utils) {
         this.#socket = socket;
         this.#mainController = controller;
@@ -15,6 +23,9 @@ class SocketIOListener {
             this.#mainController.buildTable(data);
         })
 
+        /**
+         * WebSocket event listener - "update_current_song"
+         */
         this.#socket.on("update_current_song", async (data) => {
             try {
                 const currentSong = await this.#mainController.getActualSong();
@@ -27,18 +38,28 @@ class SocketIOListener {
             }
         })
 
-        this.#socket.on("spotify_auth_finished_successful", (data) => {
+        /**
+         * WebSocket event listener - "spotify_auth_finished_successful"
+         */
+        this.#socket.on("spotify_auth_finished_successful", () => {
             this.#router.getBackroom();
             if ($("#fetchAlert")) {
                 $("#fetchAlert").parent().find("#fetchAlert").remove();
             }
         })
 
+        /**
+         * WebSocket event listener - "spotify_auth_finished_failure"
+         */
         this.#socket.on("spotify_auth_finished_failure", (error) => {
             this.#router.getBackroom();
-            $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>Error</strong> |Spotify-Login failed: ${error.message}</div>`))
+            $("#main-body").append($(`<div id="fetchAlert" class='alert alert-danger'><strong>Error</strong> | Spotify-Login failed: ${error.message}</div>`))
         })
 
+
+        /**
+         * WebSocket event listener - "dj_in_the_house"
+         */
         this.#socket.on("dj_in_the_house", async (data) => {
             if (data && !(await this.#utils.getCookieValue("dj_in_the_House"))) {
                 $("#im-the-dj").attr('style', 'display: none !important');
