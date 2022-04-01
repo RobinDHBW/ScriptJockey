@@ -61,10 +61,27 @@
                 "tags": [
                     "ScriptJockey-Frontend"
                 ],
+                "parameters": [
+                    {
+                        "in": "cookies",
+                        "name": "spotify_auth_state",
+                        "description": "Cookie for spotify authentication",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "description": "load HTML page for DJ Settings",
                 "responses": {
                     "200": {
                         "description": "backroom.html"
+                    },
+                    "250": {
+                        "description": "link to spotify login"
+                    },
+                    "330": {
+                        "description": "deny access"
                     },
                     "501": {
                         "description": "internal Server Error"
@@ -77,6 +94,17 @@
                 "tags": [
                     "ScriptJockey-Frontend"
                 ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "force",
+                        "description": "Force to fetch playlist from spotify",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
                 "description": "Sync Scriptjockey middleware with Spotify, fetch the playlist",
                 "responses": {
                     "200": {
@@ -84,6 +112,9 @@
                     },
                     "501": {
                         "description": "internal Server Error"
+                    },
+                    "550": {
+                        "description": "not authenticated yet"
                     }
                 }
             }
@@ -93,6 +124,17 @@
                 "tags": [
                     "ScriptJockey-Frontend"
                 ],
+                "requestBody": {
+                    "description": "id to upvote a song",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Upvote"
+                            }
+                        }
+                    }
+                },
                 "description": "Upvote a song in the loaded playlist",
                 "responses": {
                     "200": {
@@ -354,6 +396,15 @@
     },
     "components": {
         "schemas": {
+            "Upvote": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "nullable": true
+            },
             "Lyrics": {
                 "type": "object",
                 "properties": {
